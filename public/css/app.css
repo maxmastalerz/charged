@@ -19,7 +19,6 @@ html, body {
 }
 
 #chatWrapper {
-	display: none;
 	width: calc(46% - 40px);
 	float: left;
 	overflow-y: scroll;
