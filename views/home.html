@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Miner</title>
+		<link rel="stylesheet" type="text/css" href="css/app.css">
+	</head>
+
+	<body>
+		<div id="roomWrapper">
+			<b>Create Room:</b><br/>
+			<input type="text" id="roomname" placeholder="Room Name" style="width: 140px;"/>
+			<select id="maxPlayers" style="width: 140px">
+				<option value="6">6 player limit</option>
+				<option value="5">5 player limit</option>
+				<option value="4">4 player limit</option>
+				<option value="3">3 player limit</option>
+				<option value="2">2 player limit</option>
+			</select><br/>
+			<br/>Advanced options:<br/>
+			<input type="text" id="mapSize" placeholder="Custom map size (10-70)" style="width: 140px;"/>
+			<input type="text" id="mapVisibility" placeholder="Map visibility (5-20)" style="width: 140px;"/>
+			<input type="text" id="bombDelay" placeholder="Bomb Delay in millisecons" style="width: 140px;"/>
+			<input type="text" id="roomPassword" placeholder="Optional Password" style="width: 140px;"/>
+			<input type="button" id="roombutton"  value="Create and join" style="width: 140px;"/><hr/>
+
+			<b>Players</b>
+			<div id="playersInRoom"></div>
+
+			<hr/><b>Rooms</b><br/>
+			<div id="rooms"></div>
+		</div>
+
+
+		<div id="hiddenSprites" style="display: none;">
+			<img id="bombTitle" src="img/bombTitle.png"/>
+			<img id="bomb" src="img/bomb.png"/>
+			<img id="explosion1" src="img/1.png">
+			<img id="explosion2" src="img/2.png">
+			<img id="explosion3" src="img/3.png">
+			<img id="explosion4" src="img/4.png">
+			<img id="fire" src="img/fire.jpg">
+		</div>
+		<canvas id="game"></canvas>
+
+		<div id="chatWrapper">
+			<b>CHAT</b><hr/>
+			<div id="conversation"></div>
+
+			<input id="data" style="width:200px;"/><input type="button" id="datasend" value="send" />
+			<input type="button" id="changeName" value="Change name" />
+		</div>
+	</body>
+
+	<!--<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>-->
+	<script src="js/socket.io-1.3.5.js"></script>
+	<script src="js/jquery-1.11.3.min.js"></script>
+
+	<script src="js/logic.js"></script>
+</html>
