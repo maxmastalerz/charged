@@ -1,4 +1,4 @@
-var server = io.connect('localhost');
+var server = io.connect('https://tic-tic-boom.herokuapp.com/');
 
 $(document).ready(function($) {
 	var bomb = document.getElementById('bomb'),
