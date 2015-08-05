@@ -1,5 +1,5 @@
-var routeHomepage 	= require('./routes/routeHomepage.js');
-
 module.exports = function (app) {
-	app.get('/',		routeHomepage.routeOne);
+	app.get('/', function(req, res) {
+		res.render('home.html', {});
+	});
 };

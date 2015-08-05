@@ -1,19 +1,21 @@
-var express 		= require('express'),						//Express module
-	http 			= require('http'),							//Http module
-	mongoose 		= require('mongoose'),						//Mongoose module
-	env 			= process.env.NODE_ENV || 'development',	//Get NodeJS environment
-	config 			= require('./mongoDBConfig.js')[ env ],		//MongoDB databases config
+var express 		= require('express'),
+	http 			= require('http'),
+	mongoose 		= require('mongoose'),
 	socket 			= require('socket.io'),
 	sanitizeHtml 	= require('sanitize-html'),
 	generateName 	= require('sillyname');
 
-//mongoose.connect(config.db);								//MONGODB connection
-var app = module.exports = express();						//Create app
-require('./express-settings.js')(app);						//Express settings
-require('./express-routes.js')(app);						//Express routing
+var app = module.exports = express();
+var config = require('./config.js')(app);
+require('./express-routes.js')(app);
+
+if(config.connectToMongoDB) {
+	mongoose.connect(config.db);
+	console.log('Connected to '+config.db);
+}
 
 var server = http.createServer(app).listen(app.get('port'), function() {
-  console.log('Express server listening on port ' + app.get('port') + ' under ' + env + ' environment');
+  console.log('Express server @ '+ config.host+ ':' + app.get('port') + '/ under ' + app.get('env') + ' environment');
 });
 
 var rooms = {};
