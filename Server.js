@@ -15,7 +15,7 @@ if(config.connectToMongoDB) {
 }
 
 var server = http.createServer(app).listen(app.get('port'), function() {
-  console.log('Express server @ '+ config.host+ ':' + app.get('port') + '/ under ' + app.get('env') + ' environment');
+	console.log('Express server @ '+ config.host+ ':' + app.get('port') + '/ under ' + app.get('env') + ' environment');
 });
 
 var rooms = {};
