@@ -30,7 +30,8 @@ module.exports = function(app) {
 		app.use(express.errorHandler());
 	});
 
-	this.host = 'https://tic-tic-boom.herokuapp.com/';
+	//this.host = 'https://tic-tic-boom.herokuapp.com/';
+	this.host = '192.168.1.10';
 	this.connectToMongoDB = false;
 	this.databases = {
 		'development': 'mongodb://localhost:27017/development',

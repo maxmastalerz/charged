@@ -1,8 +1,16 @@
+@font-face {
+    font-family: 'Bit';
+    src: url('/fonts/bit.TTF');
+}
+
 html, body {
     margin: 0px;
     padding: 0px;
     background-color: #000;
     color: #FFF;
+    height: 100%;
+	overflow: hidden;
+	min-width: 570px;
 }
 
 #roomWrapper {
@@ -12,30 +20,66 @@ html, body {
 	margin: 10px;
 }
 
-#game {
-	float: left;
-	border: solid;
-	min-width: 400px;	/*It's width is usually 33.33%*/
+#gameWrapper {
+	height: 100%;
+	display: inline-block;
+	position: relative;
+}
+	#game {
+		outline: none;
+		height: 100%;
+	}
+
+	#roomList {
+		display: none;
+		background-color: black;
+		position: absolute;
+	}
+
+	#chatInput {
+		display: none;
+		position: absolute;
+		left: 3px;
+		bottom: 3px;
+	}
+
+p {
+	margin: 0px;
 }
 
+
+
 #chatWrapper {
-	width: calc(46% - 40px);
-	float: left;
-	overflow-y: scroll;
+	display: none;
 	margin: 10px;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
 }
 
 	#conversation {
-		height: 300px;
+		height: 100%;
+		overflow: auto;
 	}
 
-@media only screen and (max-width: 1207px) {
+/*@media only screen and (max-width: 1207px) {
 	#chatWrapper {
 		width: calc(79% - 440px);
 	}
 }
 @media only screen and (max-width: 1025px) {
 	#chatWrapper {
+		top: 400px;
+		left: 0px;
 		width: 98%;
+		min-width: 570px;
 	}
 }
+@media only screen and (max-width: 575px) {
+	#game {
+		float: right;
+		padding-left: -20px;
+		margin-left: -20px;
+	}
+}*/

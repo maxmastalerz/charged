@@ -6,7 +6,8 @@
 	</head>
 
 	<body>
-		<div id="roomWrapper">
+		<div style="font-family: Bit;">.</div><!--preload doesn't work anyomre... wtf-->
+		<div id="roomWrapper" style="display: none;">
 			<b>Create Room:</b><br/>
 			<input type="text" id="roomname" placeholder="Room Name" style="width: 140px;"/>
 			<select id="maxPlayers" style="width: 140px">
@@ -16,45 +17,40 @@
 				<option value="3">3 player limit</option>
 				<option value="2">2 player limit</option>
 			</select><br/>
-			<br/>Advanced options:<br/>
-			<input type="text" id="mapSize" placeholder="Custom map size (10-70)" style="width: 140px;"/>
-			<input type="text" id="mapVisibility" placeholder="Map visibility (5-20)" style="width: 140px;"/>
-			<input type="text" id="bombDelay" placeholder="Bomb Delay in millisecons" style="width: 140px;"/>
+			Advanced options:<br/>
+			<input type="text" id="mapSize" placeholder="Map size (10-70)" style="width: 140px;"/>
+			<input type="text" id="mapVisibility" placeholder="Map visibility (5-35)" style="width: 140px;"/>
+			<input type="text" id="bombDelay" placeholder="Bomb Delay(500-3000)" style="width: 140px;"/>
 			<input type="text" id="roomPassword" placeholder="Optional Password" style="width: 140px;"/>
-			<input type="button" id="roombutton"  value="Create and join" style="width: 140px;"/><hr/>
+			<input type="button" id="roombutton"  value="Create and join" style="width: 140px;"/>
 
-			<b>Players</b>
 			<div id="playersInRoom"></div>
 
-			<hr/><b>Rooms</b><br/>
-			<div id="rooms"></div>
-		</div>
 
+		</div>
 
 		<div id="hiddenSprites" style="display: none;">
-			<img id="bombTitle" src="img/bombTitle.png"/>
-			<img id="bomb" src="img/bomb.png"/>
-			<img id="explosion1" src="img/1.png">
-			<img id="explosion2" src="img/2.png">
-			<img id="explosion3" src="img/3.png">
-			<img id="explosion4" src="img/4.png">
-			<img id="fire" src="img/fire.jpg">
+			<img id="grid" src="img/grid.png"><img id="heart" src="img/heart.png"><img id="bomb" src="img/bomb.png"/><img id="explosion1" src="img/1.png">
+			<img id="explosion2" src="img/2.png"><img id="explosion3" src="img/3.png"><img id="explosion4" src="img/4.png"><img id="crate" src="img/crate.png">
 		</div>
-		<canvas id="game"></canvas>
+
+		<div id="gameWrapper">
+			<canvas id="game" tabindex="1"></canvas>
+			<div id="roomList"></div>
+			<div id="chatInput">
+				<input id="data" style="width:calc(100% - 158px);"/>
+				<input type="button" id="datasend" value="send" />
+				<input type="button" id="changeName" value="Change name" />
+			</div>
+		</div>
 
 		<div id="chatWrapper">
 			<b>CHAT</b><hr/>
 			<div id="conversation"></div>
-
-			<input id="data" style="width:200px;"/><input type="button" id="datasend" value="send" />
-			<input type="button" id="changeName" value="Change name" />
 		</div>
 	</body>
 
-	<!--<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
-	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>-->
-	<script src="js/socket.io-1.3.5.js"></script>
-	<script src="js/jquery-1.11.3.min.js"></script>
-
+	<!--<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script><script src="//code.jquery.com/jquery-1.11.3.min.js"></script>-->
+	<script src="js/socket.io-1.3.5.js"></script><script src="js/jquery-1.11.3.min.js"></script>
 	<script src="js/logic.js"></script>
 </html>
