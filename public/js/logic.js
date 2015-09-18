@@ -1,5 +1,5 @@
-//var server = io.connect('https://tic-tic-boom.herokuapp.com/');
-var server = io.connect('localhost/');
+var server = io.connect('https://tic-tic-boom.herokuapp.com/');
+//var server = io.connect('localhost/');
 
 $(document).ready(function($) {
 	//Load images
