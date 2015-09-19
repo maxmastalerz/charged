@@ -1,4 +1,5 @@
-var server = io.connect('http://localhost:80');
+var server = io.connect('https://tic-tic-boom.herokuapp.com/');
+//var server = io.connect('192.168.1.10/');
 
 $(document).ready(function($) {
 	//Load images
