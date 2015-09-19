@@ -1,7 +1,6 @@
 var server = io.connect(window.location.href);
 
 $(document).ready(function($) {
-	//Load images
 	var bomb = document.getElementById('bomb'), grid = document.getElementById('grid'), heart = document.getElementById('heart'), explosion1 = document.getElementById('explosion1'), explosion2 = document.getElementById('explosion2'), explosion3 = document.getElementById('explosion3'), explosion4 = document.getElementById('explosion4'), crate = document.getElementById('crate');
 
 	var canvas = document.getElementById('game'),
@@ -38,6 +37,7 @@ $(document).ready(function($) {
 	server.on('joinedRoom', function() {
 		window.removeEventListener("mousedown", doMouseDown, false);
 		$('#roomList').hide();
+		$('#roomCreator').hide();
 		$('#chatInput').show();
 		$('#chatWrapper').show();
 
@@ -68,33 +68,11 @@ $(document).ready(function($) {
 		$('#conversation').append('<p><b><font color="'+colour+'">'+ username + ':</font></b> ' + data + '</p>');
 	});
 
-	var toggle = false;
 	server.on('updatePlayersList', function(playersInRoom) {
 		$('#playersInRoom').empty();
-		$('#playersInRoom').append('<hr/><b>Players</b><span class="toggle" style="float: right; text-decoration: underline;">Page ↹</span><br/>');
 		for(var p=0; p<playersInRoom.length;p++) {
 			$('#playersInRoom').append('<div class="player">'+playersInRoom[p]+'</div>');
 		}
-
-		if(toggle===true) {
-			$('div.player:gt(2)').each(function (index) {}).show();
-			$('div.player:lt(3)').each(function (index) {}).hide();
-		} else if(toggle===false){
-			$('div.player:gt(2)').each(function (index) {}).hide();
-			$('div.player:lt(3)').each(function (index) {}).show();
-		}
-
-		$('.toggle').click(function(event) {
-			if(toggle===false) {
-				toggle=true;
-				$('div.player:gt(2)').each(function (index) {}).show();
-				$('div.player:lt(3)').each(function (index) {}).hide();
-			} else if(toggle===true){
-				toggle=false;
-				$('div.player:gt(2)').each(function (index) {}).hide();
-				$('div.player:lt(3)').each(function (index) {}).show();
-			}
-		});
 	});
 
 	server.on('updateRooms', function (rooms) {
@@ -238,6 +216,7 @@ $(document).ready(function($) {
 		y = event.pageY - canvas.offsetTop;
 		if(x>=(canvas.width/2.39) && x<=(canvas.width/1.72) && y>=(canvas.height/2.58) && y<=(canvas.height/2.21)) {
 			$('#roomList').show();
+			$('#roomCreator').show();
 		}
 		if(x>=(canvas.width/2.39) && x<=(canvas.width/1.29) && y>=(canvas.height/2.08) && y<=(canvas.height/1.82)) {
 			alert("Instructions");
@@ -271,6 +250,12 @@ $(document).ready(function($) {
 				left: canvas.width*0.03,
 				height: canvas.height*0.79,
 				width: canvas.width*0.36
+			});
+			$('#roomCreator').css({
+				top: canvas.height*0.675,
+				left: canvas.height*0.418,
+				height: canvas.height*0.325,
+				width: canvas.width*0.55
 			});
 		}
 	}

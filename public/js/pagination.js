@@ -24,7 +24,7 @@ function pageChng(rooms, diff) {
 	var shownRooms = rooms.slice(start,end);
 
 	$('#roomList').empty();
-	$('#roomList').append("<div style='font-size: 5.5vh; font-family: Bit; text-align: center; color: grey'>&nbsp;Rooms<span class='prev' onclick='pageChng("+JSON.stringify(rooms)+", -1)'>&lt;</span><span class='mext' onclick='pageChng("+JSON.stringify(rooms)+", 1)'>&gt;</span></div>");
+	$('#roomList').append("<div style='font-size: 5.5vh; font-family: Bit; text-align: center; color: grey'>&nbsp;Rooms<span class='prev' onclick='pageChng("+JSON.stringify(rooms)+", -1)'>←</span><span class='mext' onclick='pageChng("+JSON.stringify(rooms)+", 1)'>→</span></div>");
 	for(var room=0;room<shownRooms.length;room++) {
 		$('#roomList').append('<div style="font-size: 1.8vh; background-color: grey; padding: 0.8vh; margin: 0.8vh;" onclick="server.emit(\'switchRoom\',\''+shownRooms[room].roomName+'\');">' + shownRooms[room].roomName + '<span style="float: right;">'+shownRooms[room].playerCount+'/'+shownRooms[room].maxPlayers+'</span></div>');
 	}

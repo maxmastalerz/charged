@@ -13,11 +13,19 @@ html, body {
 	overflow: hidden;
 }
 
-#roomWrapper {
-	float: left;
-	width: 20%;
-	min-width: 150px;
-	margin: 10px;
+h1 {
+	font-size: 5.5vh;
+	font-family: Bit;
+	text-align: center;
+	color: grey;
+}
+
+h2 {
+	font-size: 3.2vh;
+	font-family: Bit;
+	text-align: center;
+	color: grey;
+	margin: 2px 0px 2px 0px;
 }
 
 #gameWrapper {
@@ -36,6 +44,19 @@ html, body {
 		position: absolute;
 	}
 
+	#roomCreator {
+		display: none;
+		background-color: black;
+		position: absolute;
+	}
+
+		#roomCreator input, #roomCreator select {
+			background-color: grey;
+			border-color: black;
+			border: 1px solid;
+			margin: 0px;
+		}
+
 	#chatInput {
 		display: none;
 		position: absolute;
@@ -47,8 +68,6 @@ p {
 	margin: 0px;
 }
 
-
-
 #chatWrapper {
 	display: none;
 	margin: 10px;
@@ -59,27 +78,6 @@ p {
 }
 
 	#conversation {
-		height: calc(100% - 30px);
+		height: calc(100% - 180px);
 		overflow: auto;
 	}
-
-/*@media only screen and (max-width: 1207px) {
-	#chatWrapper {
-		width: calc(79% - 440px);
-	}
-}
-@media only screen and (max-width: 1025px) {
-	#chatWrapper {
-		top: 400px;
-		left: 0px;
-		width: 98%;
-		min-width: 570px;
-	}
-}
-@media only screen and (max-width: 575px) {
-	#game {
-		float: right;
-		padding-left: -20px;
-		margin-left: -20px;
-	}
-}*/
