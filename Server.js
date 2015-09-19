@@ -32,7 +32,7 @@ io.sockets.on('connection', function(client) {
 			break;
 		}
 	}
-	client.emit('updateRooms', rooms);
+	meth.updateRoomLists(io.of("/"), rooms);
 
 	client.on('changeName', function(newName) {
 		newName = sanitizeHtml(newName);		//Must sanitize before & after checking emptiness of newName
@@ -67,7 +67,7 @@ io.sockets.on('connection', function(client) {
 
 		if(room!=='null' && room!=='[object Object]' && room!=='undefined' && room!=='' && !(/^\s+$/.test(room))) {
 			room = sanitizeHtml(room.replace(/\s+/g,' ')).trim();
-			if(meth.roomAvailable(rooms, room) && room.length<=20) {
+			if(meth.roomAvailable(rooms, room) && room.length<=15) {
 				if(maxPlayers>=2 && maxPlayers<=6 && mapSize<=70 && mapSize>=10 && mapVisibility>=5 && mapVisibility<=35 && bombDelay>=500 && bombDelay<=3000) {
 					rooms[room] = {
 						players: {},
@@ -91,13 +91,13 @@ io.sockets.on('connection', function(client) {
 					}
 					meth.joinRoom(io, rooms, client, room);
 				} else {
-					client.emit('roomCreateError', 'Some room variables were not within the correct limits.');
+					client.emit('errorMessage', 'Some room variables were not within the correct limits.');
 				}
 			} else {
-				client.emit('roomCreateError', 'The room name must be unique, and must not surpass 20 chars');
+				client.emit('errorMessage', 'The room name must be unique, and must not surpass 15 chars');
 			}
 		} else {
-			client.emit('roomCreateError', 'The room name cannot be blank');
+			client.emit('errorMessage', 'The room name cannot be blank');
 		}
 	});
 
@@ -114,25 +114,27 @@ io.sockets.on('connection', function(client) {
 
 	client.on('move', function(deltaX, deltaY) { 					//Received action from a client.
 		if(client.room!==null) {
-			if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='0' || rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='4') {
-				if(client.bombUnderneath===false) {
-					rooms[client.room].map[client.yPos][client.xPos] = '0';
-				} else {
-					rooms[client.room].map[client.yPos][client.xPos] = '3';
+			if(deltaX>-2 && deltaX<2 && deltaY>-2 && deltaY<2) {
+				if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='0' || rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='4') {
+					if(client.bombUnderneath===false) {
+						rooms[client.room].map[client.yPos][client.xPos] = '0';
+					} else {
+						rooms[client.room].map[client.yPos][client.xPos] = '3';
+					}
+					client.bombUnderneath = false;
+
+					if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='4') {
+						client.bombs++;
+						client.emit('updateBombs', client.bombs);
+					}
+
+					client.xPos+=deltaX;
+					client.yPos+=deltaY;
+
+					rooms[client.room].map[client.yPos][client.xPos] = { id: client.id, username: client.username, colour: client.colour, bombUnderneath: client.bombUnderneath };
 				}
-				client.bombUnderneath = false;
-
-				if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='4') {
-					client.bombs++;
-					client.emit('updateBombs', client.bombs);
-				}
-
-				client.xPos+=deltaX;
-				client.yPos+=deltaY;
-
-				rooms[client.room].map[client.yPos][client.xPos] = { id: client.id, username: client.username, colour: client.colour, bombUnderneath: client.bombUnderneath };
+				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 			}
-			meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 		}
 	});
 

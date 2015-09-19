@@ -1,5 +1,5 @@
-var server = io.connect('https://tic-tic-boom.herokuapp.com/');
-//var server = io.connect('localhost/');
+//var server = io.connect('https://tic-tic-boom.herokuapp.com/');
+var server = io.connect('192.168.1.10/');
 
 $(document).ready(function($) {
 	//Load images
@@ -33,7 +33,7 @@ $(document).ready(function($) {
 	server.on('usernameCreateError', function(errorMessage) {
 		server.emit('changeName', prompt(errorMessage));
 	});
-	server.on('roomCreateError', function(errorMessage) {
+	server.on('errorMessage', function(errorMessage) {
 		alert(errorMessage);
 	});
 	server.on('joinedRoom', function() {
@@ -99,11 +99,7 @@ $(document).ready(function($) {
 	});
 
 	server.on('updateRooms', function (rooms) {
-		$('#roomList').empty();
-		$('#roomList').append('<div style="font-size: 6vh; font-family: Bit; text-align: center; color: grey">Rooms</div>');
-		for(var room in rooms) {
-			$('#roomList').append('<div style="background-color: grey; padding: 2px; margin: 5px;" onclick="server.emit(\'switchRoom\',\''+room+'\');">' + room + '<span style="float: right;">'+rooms[room].playerCount+'/'+rooms[room].maxPlayers+'</span></div>');
-		}
+		pageChng(rooms, 0);
 	});
 
 	$(function(){

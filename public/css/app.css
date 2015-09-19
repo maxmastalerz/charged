@@ -9,8 +9,8 @@ html, body {
     background-color: #000;
     color: #FFF;
     height: 100%;
-	overflow: hidden;
 	min-width: 570px;
+	overflow: hidden;
 }
 
 #roomWrapper {
@@ -59,7 +59,7 @@ p {
 }
 
 	#conversation {
-		height: 100%;
+		height: calc(100% - 30px);
 		overflow: auto;
 	}
 

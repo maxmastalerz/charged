@@ -20,10 +20,19 @@ module.exports = {
 		return Math.sqrt(Math.pow((x2-x1),2) + Math.pow((y2-y1),2));
 	},
 	updateRoomLists: function(ns, rooms) {
+		var roomsCensored = [];
+		for(var room in rooms) {
+			roomsCensored.push({
+				roomName: room,
+				playerCount: rooms[room].playerCount,
+				maxPlayers: rooms[room].maxPlayers
+			});
+		}
+
 		for (var id in ns.connected) {
 			if(id!==undefined) {
 				var iteratedClient = ns.connected[id];
-				iteratedClient.emit('updateRooms', rooms);
+				iteratedClient.emit('updateRooms', roomsCensored);
 			}
 		}
 	},
