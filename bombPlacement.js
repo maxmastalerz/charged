@@ -62,10 +62,10 @@ function destroyBlocks(io, client, rooms, bombY, bombX) {
 }
 
 function checkForDeath(io, client, rooms) {
-	for(var username in rooms[client.room].players) {
-		var iteratedClient = meth.clientFromUsername(io.of("/"), username, iteratedClient);
 
-		if(rooms[iteratedClient.room].map[iteratedClient.yPos][iteratedClient.xPos]=='0') {
+	for(var username in rooms[client.room].players) {
+		var iteratedClient = meth.clientFromUsername(io.of("/"), username, client);
+		if(rooms[client.room].map[iteratedClient.yPos][iteratedClient.xPos]=='0') {
 			iteratedClient.lives--;
 			iteratedClient.emit('updateLives', iteratedClient.lives);
 			if(iteratedClient.lives===0) {
@@ -74,6 +74,14 @@ function checkForDeath(io, client, rooms) {
 			meth.spawn(io.of("/"), rooms, iteratedClient);
 		}
 	}
+	/*if(rooms[client.room].map[client.yPos][client.xPos]=='0') {
+		client.lives--;
+		client.emit('updateLives', client.lives);
+		if(client.lives===0) {
+			//do something
+		}
+		meth.spawn(io.of("/"), rooms, client);
+	}*/
 }
 
 function broadcastExplosion(io, client, rooms, bombY, bombX) {
