@@ -1,3 +1,7 @@
+var sillyName = require('sillyname');
+var sanitizeHtml = require('sanitize-html');
+var leave = require('./leave.js');
+
 function getSlice(arr, upper, lower) { return arr.slice(upper[0], lower[0]).map(function(row) { return row.slice(upper[1], lower[1]); }); }
 function componentToHex(c) { var hex = c.toString(16); return hex.length == 1 ? "0" + hex : hex; }
 function rgbToHex(r, g, b) { return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b); }
@@ -120,67 +124,36 @@ module.exports = {
 		}
 		io.sockets.in(room).emit('updatePlayersList', playersInRoom);
 	},
-	joinRoom: function(io, rooms, client, newroom) {
-		function connectToRoom() {
-			if(client.room!==null) {
-				module.exports.leaveRoom(io, rooms, client);
+	generateUsername: function(io, client) {
+		var generated;
+		while(true) {
+			generated = sillyName();
+			if(module.exports.usernameAvailable(io.of("/"), generated)) {
+				return generated;
 			}
-
-			client.join(newroom);
-			client.emit('joinedRoom');
-			client.emit('updateChat', 'SERVER', '#00FFFF', 'You have joined \'' + newroom+'\'');
-			client.broadcast.to(newroom).emit('updateChat', 'SERVER', '#00FFFF', client.username + ' has joined this room');
-			client.room = newroom;
-			rooms[client.room].players[client.username] = client.id;
-			module.exports.updatePlayersListIn(io, rooms, client.room);
-			rooms[newroom].playerCount = Object.keys(rooms[newroom].players).length;
-			module.exports.updateRoomLists(io.of("/"), rooms);
-
-			client.bombs = 7;
-			client.lives = 3;
-			client.emit('updateLives', client.lives);
-			client.emit('updateBombs', client.bombs);
-			module.exports.spawn(io.of("/"), rooms, client);
-		}
-
-		if(rooms[newroom].playerCount!=rooms[newroom].maxPlayers) {
-			if(rooms[newroom].roomPassword!==null) {
-				client.emit('roomProtected', newroom);
-				client.on('checkRoomPassword', function(room, passwordInput) {
-					if(rooms[room].roomPassword===passwordInput) {
-						connectToRoom();
-					} else if(passwordInput!==null) {
-						client.emit('roomProtected', newroom);
-					}
-				});
-			} else {
-				connectToRoom();
-			}
-		} else {
-			client.emit('updateChat', 'SERVER', '#00FFFF', 'You cannot join full rooms!');
 		}
 	},
-	leaveRoom: function(io, rooms, client) {
-		client.broadcast.to(client.room).emit('updateChat', 'SERVER', '#00FFFF', client.username+' chose to leave');
-
-		rooms[client.room].map[client.yPos][client.xPos] = '0';
-
-		for(var player in rooms[client.room].players) {
-			if(player==client.username) {
-				delete rooms[client.room].players[player];
-				module.exports.updatePlayersListIn(io, rooms, client.room);
+	changeName: function(io, client, rooms, newName) {
+		newName = sanitizeHtml(newName);		//Must sanitize before & after checking emptiness of newName
+		if(newName!=='null' && newName!=='undefined' && newName!=='' && !(/^\s+$/.test(newName))) {
+			newName = sanitizeHtml(newName.replace(/\s+/g,' ')).trim();
+			if(module.exports.usernameAvailable(io.of("/"), newName) && newName.length<=20) {
+				var oldName = client.username;
+				client.username = newName;
+				client.emit('updateChat', 'SERVER', '#00FFFF', 'Username was changed to: '+newName);
+				if(client.room!==null) {
+					delete rooms[client.room].players[oldName];
+					rooms[client.room].players[newName] = client.id;
+					rooms[client.room].map[client.yPos][client.xPos] = { id: client.id, username: newName, colour: client.colour };
+					module.exports.updatePlayersListIn(io, rooms, client.room);
+					module.exports.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+				}
+			} else {
+				client.emit('usernameCreateError', 'Username restrictions: \n   1. Username must be unique \n   2. Username must not surpass 20 chars \nPlease try again: ');
 			}
 		}
-
-		module.exports.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
-
-		client.leave(client.room);
-		client.emit('leftRoom');
-		rooms[client.room].playerCount = Object.keys(rooms[client.room].players).length;
-		if(rooms[client.room].playerCount===0) {
-			delete rooms[client.room];
-		}
-		client.room = null;
-		module.exports.updateRoomLists(io.of("/"), rooms);
+	},
+	sanitizeInput: function(input) {
+		return sanitizeHtml(input);
 	}
 };
