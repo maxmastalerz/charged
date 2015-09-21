@@ -42,7 +42,7 @@ function canPlaceBomb(client) {
 
 function destroyBlocks(io, client, rooms, bombY, bombX) {
 	for(var i=-2;i<=2;i++) {
-		if((bombY+i)===rooms[client.room].mapSize || (bombY+i)===rooms[client.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1) {
+		if((bombY+i)===rooms[client.room].mapSize || (bombY+i)===rooms[client.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || rooms[client.room].map[bombY+i][bombX]==='4') {
 			continue;
 		} else {
 			rooms[client.room].map[bombY+i][bombX] = '0';
@@ -50,7 +50,7 @@ function destroyBlocks(io, client, rooms, bombY, bombX) {
 		}
 	}
 	for(var ii=-2;ii<=2;ii++) {
-		if((bombX+ii)===rooms[client.room].mapSize || (bombX+ii)===rooms[client.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1) {
+		if((bombX+ii)===rooms[client.room].mapSize || (bombX+ii)===rooms[client.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || rooms[client.room].map[bombY][bombX+ii]==='4') {
 			continue;
 		} else {
 			rooms[client.room].map[bombY][bombX+ii] = '0';
@@ -74,14 +74,6 @@ function checkForDeath(io, client, rooms) {
 			meth.spawn(io.of("/"), rooms, iteratedClient);
 		}
 	}
-	/*if(rooms[client.room].map[client.yPos][client.xPos]=='0') {
-		client.lives--;
-		client.emit('updateLives', client.lives);
-		if(client.lives===0) {
-			//do something
-		}
-		meth.spawn(io.of("/"), rooms, client);
-	}*/
 }
 
 function broadcastExplosion(io, client, rooms, bombY, bombX) {
