@@ -21,17 +21,17 @@ function playersNearbySpawn(io, client, rooms, bombY, bombX) {
 	}
 }
 
-function respawnBlock(io, client, rooms, bombY, bombX) {
+function scheduleRespawn(io, client, rooms, bombY, bombX) {
 	setTimeout(function() {
 		if(client.room!==null) {
 			if(playersNearbySpawn(io, client, rooms, bombY, bombX)) {
-				respawnBlock(io, client, rooms, bombY,bombX);
+				scheduleRespawn(io, client, rooms, bombY,bombX);
 			} else if(rooms[client.room].map[bombY][bombX]==='0') {
 				rooms[client.room].map[bombY][bombX] = '1';
 				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 			}
 		}
-	}, 15000);	//delay between trying to respawn the block that was blown up
+	}, 5000);	//delay between trying to respawn the block that was blown up
 }
 
 function canPlaceBomb(client) {
@@ -45,16 +45,24 @@ function destroyBlocks(io, client, rooms, bombY, bombX) {
 		if((bombY+i)===rooms[client.room].mapSize || (bombY+i)===rooms[client.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || rooms[client.room].map[bombY+i][bombX]==='4') {
 			continue;
 		} else {
-			rooms[client.room].map[bombY+i][bombX] = '0';
-			respawnBlock(io, client, rooms, bombY+i,bombX);
+			if(rooms[client.room].map[bombY+i][bombX]!=='0') {
+				if(rooms[client.room].map[bombY+i][bombX]!=='3' && rooms[client.room].map[bombY+i][bombX].username===undefined) {
+					scheduleRespawn(io, client, rooms, bombY+i,bombX);
+				}
+				rooms[client.room].map[bombY+i][bombX] = '0';
+			}
 		}
 	}
 	for(var ii=-2;ii<=2;ii++) {
 		if((bombX+ii)===rooms[client.room].mapSize || (bombX+ii)===rooms[client.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || rooms[client.room].map[bombY][bombX+ii]==='4') {
 			continue;
 		} else {
-			rooms[client.room].map[bombY][bombX+ii] = '0';
-			respawnBlock(io, client, rooms, bombY,bombX+ii);
+			if(rooms[client.room].map[bombY][bombX+ii]!=='0') {
+				if(rooms[client.room].map[bombY][bombX+ii]!=='3' && rooms[client.room].map[bombY][bombX+ii].username===undefined) {
+					scheduleRespawn(io, client, rooms, bombY,bombX+ii);
+				}
+				rooms[client.room].map[bombY][bombX+ii] = '0';
+			}
 		}
 	}
 	spawnPickup(client, rooms);
