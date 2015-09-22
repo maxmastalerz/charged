@@ -11,15 +11,18 @@ $(document).ready(function($) {
 		bombCount, lifeCount,
 		w, h,			//w and h of the game board, not the canvas.
 		localMap,
-		focusedOnGame = false;
+		focusedOnGame = false,
+		atMenu = true;
 
 	calcCanvasSizing();
 	window.onresize = function(event) {
 		calcCanvasSizing();
 	};
 	server.on('updateMap', function(map) {
-		updateLocalMap(map);
-		localMap = map;
+		if(atMenu===false) {
+			updateLocalMap(map);
+			localMap = map;
+		}
 	});
 	server.on('updateBombs', function(bombs) {
 		bombCount = bombs;
@@ -40,9 +43,12 @@ $(document).ready(function($) {
 		window.removeEventListener("mousedown", doMouseDown, false);
 		$('#visibleInRoom').show();
 		$('#visibleAtPlay').hide();
+		atMenu=false;
 	});
 	server.on('leftRoom', function() {
-		//
+		$('#visibleInRoom').hide();
+		atMenu = true;
+		drawMenu();
 	});
 
 	server.on('explosionVisual', function(map, bombY, bombX) {
@@ -85,18 +91,15 @@ $(document).ready(function($) {
 			server.emit('sendchat', message);
 			scrollChat();
 		});
-
 		$('#changeName').click(function() {
 			server.emit('changeName', prompt('Choose a custom name: '));
 		});
-
 		$('#data').keypress(function(e) {
 			if(e.which == 13) {
 				$(this).blur();
 				$('#datasend').focus().click();
 			}
 		});
-
 		$('#roombutton').click(function(){
 			var name = $('#roomname').val();
 			var maxPlayers = $('#maxPlayers').val();
@@ -112,6 +115,9 @@ $(document).ready(function($) {
 			$('#bombDelay').val('');
 			$('#roomPassword').val('');
 			server.emit('createRoom', name, maxPlayers, mapSize, mapVisibility, bombDelay, roomPassword);
+		});
+		$('#returnToMenu').click(function(e) {
+			server.emit('returnToMenu');
 		});
 	});
 
@@ -223,39 +229,44 @@ $(document).ready(function($) {
 			alert("Credits");
 		}
 	}
+	function drawMenu() {
+		h = (canvas.height = parseInt($('#game').css('height'), 10))-30;
+		w = (canvas.width = canvas.height)-30;
+		var callback = function(image) { if(!image) image = this; ctx.drawImage(image, 0, 0, canvas.width, canvas.height); };
+		if(grid.complete) { callback(grid); } else { grid.onload = callback; }
+
+		ctx.font = canvas.width/37+'px Bit';
+		ctx.fillStyle = "grey";
+		ctx.fillText  ('Play', (canvas.width/2.24), canvas.height/2.32);
+		ctx.fillText  ('Instructions', (canvas.width/2.24), canvas.height/1.9);
+		ctx.fillText  ('Credits', (canvas.width/2.24), canvas.height/1.6);
+
+		window.addEventListener("mousedown", doMouseDown, false);
+
+		$('#roomList').css({
+			top: canvas.height*0.29,
+			left: canvas.width*0.03,
+			height: canvas.height*0.79,
+			width: canvas.width*0.36
+		});
+		$('#roomCreator').css({
+			top: canvas.height*0.675,
+			left: canvas.height*0.418,
+			height: canvas.height*0.325,
+			width: canvas.width*0.55
+		});
+	}
 	function calcCanvasSizing() {
 		h = (canvas.height = parseInt($('#game').css('height'), 10))-30;
 		w = (canvas.width = canvas.height)-30;
 
 		$('#chatInput').css({'width': w-6});
 		$('#chatWrapper').css({'width': $(window).width()-canvas.width-20});
-		$('#return').css({'width': w*0.1, 'height': w*0.05, 'left': w-(w*0.1)});
-		if(localMap!==undefined) {
+		$('#returnToMenu').css({'width': w*0.1, 'height': w*0.05, 'left': w-(w*0.1)});
+		if(!atMenu) {
 			updateLocalMap(localMap);
 		} else {
-			var callback = function(image) { if(!image) image = this; ctx.drawImage(image, 0, 0, canvas.width, canvas.height); };
-			if(grid.complete) { callback(grid); } else { grid.onload = callback; }
-
-			ctx.font = canvas.width/37+'px Bit';
-			ctx.fillStyle = "grey";
-			ctx.fillText  ('Play', (canvas.width/2.24), canvas.height/2.32);
-			ctx.fillText  ('Instructions', (canvas.width/2.24), canvas.height/1.9);
-			ctx.fillText  ('Credits', (canvas.width/2.24), canvas.height/1.6);
-
-			window.addEventListener("mousedown", doMouseDown, false);
-
-			$('#roomList').css({
-				top: canvas.height*0.29,
-				left: canvas.width*0.03,
-				height: canvas.height*0.79,
-				width: canvas.width*0.36
-			});
-			$('#roomCreator').css({
-				top: canvas.height*0.675,
-				left: canvas.height*0.418,
-				height: canvas.height*0.325,
-				width: canvas.width*0.55
-			});
+			drawMenu(w, h);
 		}
 	}
 	function debounce(fn, delay) {

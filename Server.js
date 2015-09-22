@@ -49,6 +49,9 @@ io.sockets.on('connection', function(client) {
 	client.on('disconnect', function() {
 		leave(io, client, rooms);
 	});
+	client.on('returnToMenu', function() {
+		leave(io, client, rooms);
+	});
 	client.on('move', function(deltaX, deltaY) {
 		move(io, client, rooms, deltaX, deltaY);
 	});

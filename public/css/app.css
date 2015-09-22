@@ -56,10 +56,10 @@ h2 {
 #visibleInRoom {
 
 }
-	#return {
+	#returnToMenu {
 		position: absolute;
 		top: 0px;
-		background: url('../img/return.png') no-repeat;
+		background: url('../img/returnToMenu.png') no-repeat;
 		background-size: 100%;
 	}
 	#chatInput {
