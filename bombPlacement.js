@@ -31,7 +31,7 @@ function scheduleRespawn(io, client, rooms, bombY, bombX) {
 				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 			}
 		}
-	}, 5000);	//delay between trying to respawn the block that was blown up
+	}, 15000);	//delay between trying to respawn the block that was blown up
 }
 
 function canPlaceBomb(client) {
