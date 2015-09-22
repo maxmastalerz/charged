@@ -27,7 +27,7 @@ function noCreationErrors(client, rooms, room, maxPlayers, mapSize, mapVisibilit
 }
 
 function generateMap(rooms, room) {
-	var density = 1;	//from 0 - 10. Lower values mean more space
+	var density = 4;	//from 0 - 10. Lower values mean more space
 
 	for(var y=0;y<rooms[room].mapSize;y++) {
 		for(var x=0;x<rooms[room].mapSize;x++) {
