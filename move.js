@@ -20,6 +20,7 @@ function decideBlockTrail(client, rooms) {	//Determines whether to leave a empty
 		rooms[client.room].map[client.yPos][client.xPos] = '0';
 	} else {
 		rooms[client.room].map[client.yPos][client.xPos] = '3';
+		//rooms[client.room].map[client.yPos][client.xPos] = '1';//wall placing?
 	}
 	client.bombUnderneath = false;
 }

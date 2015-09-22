@@ -1,4 +1,7 @@
 var server = io.connect(window.location.href);
+server.on('disconnect', function () {
+	alert('You are have been disconnected as the server can no longer see you on it\'s network');
+});
 
 $(document).ready(function($) {
 	var bomb = document.getElementById('bomb'), grid = document.getElementById('grid'), heart = document.getElementById('heart'), explosion1 = document.getElementById('explosion1'), explosion2 = document.getElementById('explosion2'), explosion3 = document.getElementById('explosion3'), explosion4 = document.getElementById('explosion4'), crate = document.getElementById('crate');
@@ -14,7 +17,6 @@ $(document).ready(function($) {
 	window.onresize = function(event) {
 		calcCanvasSizing();
 	};
-
 	server.on('updateMap', function(map) {
 		updateLocalMap(map);
 		localMap = map;
@@ -36,11 +38,8 @@ $(document).ready(function($) {
 	});
 	server.on('joinedRoom', function() {
 		window.removeEventListener("mousedown", doMouseDown, false);
-		$('#roomList').hide();
-		$('#roomCreator').hide();
-		$('#chatInput').show();
-		$('#chatWrapper').show();
-
+		$('#visibleInRoom').show();
+		$('#visibleAtPlay').hide();
 	});
 	server.on('leftRoom', function() {
 		//
@@ -215,8 +214,7 @@ $(document).ready(function($) {
 		x = event.pageX - canvas.offsetLeft;
 		y = event.pageY - canvas.offsetTop;
 		if(x>=(canvas.width/2.39) && x<=(canvas.width/1.72) && y>=(canvas.height/2.58) && y<=(canvas.height/2.21)) {
-			$('#roomList').show();
-			$('#roomCreator').show();
+			$('#visibleAtPlay').show();
 		}
 		if(x>=(canvas.width/2.39) && x<=(canvas.width/1.29) && y>=(canvas.height/2.08) && y<=(canvas.height/1.82)) {
 			alert("Instructions");
@@ -230,7 +228,8 @@ $(document).ready(function($) {
 		w = (canvas.width = canvas.height)-30;
 
 		$('#chatInput').css({'width': w-6});
-		$('#chatWrapper').css({width: $(window).width()-canvas.width-20});
+		$('#chatWrapper').css({'width': $(window).width()-canvas.width-20});
+		$('#return').css({'width': w*0.1, 'height': w*0.05, 'left': w-(w*0.1)});
 		if(localMap!==undefined) {
 			updateLocalMap(localMap);
 		} else {

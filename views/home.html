@@ -15,8 +15,8 @@
 			<img id="explosion2" src="img/2.png"><img id="explosion3" src="img/3.png"><img id="explosion4" src="img/4.png"><img id="crate" src="img/crate.png">
 		</div>
 
-		<div id="gameWrapper">
-			<canvas id="game" tabindex="1"></canvas>
+		<canvas id="game" tabindex="1"></canvas>
+		<div id="visibleAtPlay" style="display: none;">
 			<div id="roomList"></div>
 			<div id="roomCreator">
 				<h2>Room Creator</h2>
@@ -35,18 +35,21 @@
 				<input type="text" id="roomPassword" placeholder="Optional Password" style="width: 23.4vh; height: 2vh; "/>
 				<input type="button" id="roombutton"  value="Create and join" style="width: 48.2vh; font-family: Bit; margin-top: 1vh; font-size: 3vh; margin-left: 3vh"/>
 			</div>
+		</div>
+		<div id="visibleInRoom" style="display: none;">
+			<div id="return"></div>
 			<div id="chatInput">
 				<input id="data" style="width:calc(100% - 161px);"/>
 				<input type="button" id="datasend" value="send" />
 				<input type="button" id="changeName" value="Change name" />
 			</div>
-		</div>
-		<div id="chatWrapper">
-			<h2>PLAYERS</h2>
-			<div id="playersInRoom"></div>
-			<hr/>
-			<h2>CHAT</h2>
-			<div id="conversation"></div>
+			<div id="chatWrapper">
+				<h2>PLAYERS</h2>
+				<div id="playersInRoom"></div>
+				<hr/>
+				<h2>CHAT</h2>
+				<div id="conversation"></div>
+			</div>
 		</div>
 	</body>
 

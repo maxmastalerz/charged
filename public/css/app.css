@@ -28,28 +28,21 @@ h2 {
 	margin: 2px 0px 2px 0px;
 }
 
-#gameWrapper {
+#game {
+	outline: none;
 	height: 100%;
-	display: inline-block;
-	position: relative;
 }
-	#game {
-		outline: none;
-		height: 100%;
-	}
+#visibleAtPlay {
 
+}
 	#roomList {
-		display: none;
 		background-color: black;
 		position: absolute;
 	}
-
 	#roomCreator {
-		display: none;
 		background-color: black;
 		position: absolute;
 	}
-
 		#roomCreator input, #roomCreator select {
 			background-color: grey;
 			border-color: black;
@@ -57,27 +50,35 @@ h2 {
 			margin: 0px;
 		}
 
+
+
+
+#visibleInRoom {
+
+}
+	#return {
+		position: absolute;
+		top: 0px;
+		background: url('../img/return.png') no-repeat;
+		background-size: 100%;
+	}
 	#chatInput {
-		display: none;
 		position: absolute;
 		left: 3px;
 		bottom: 3px;
 	}
+	#chatWrapper {
+		margin: 10px;
+		position: absolute;
+		top: 0px;
+		bottom: 0px;
+		right: 0px;
+	}
+		#conversation {
+			height: calc(100% - 180px);
+			overflow: auto;
+		}
 
 p {
 	margin: 0px;
 }
-
-#chatWrapper {
-	display: none;
-	margin: 10px;
-	position: absolute;
-	top: 0px;
-	bottom: 0px;
-	right: 0px;
-}
-
-	#conversation {
-		height: calc(100% - 180px);
-		overflow: auto;
-	}

@@ -70,7 +70,6 @@ function destroyBlocks(io, client, rooms, bombY, bombX) {
 }
 
 function checkForDeath(io, client, rooms) {
-
 	for(var username in rooms[client.room].players) {
 		var iteratedClient = meth.clientFromUsername(io.of("/"), username, client);
 		if(rooms[client.room].map[iteratedClient.yPos][iteratedClient.xPos]=='0') {
