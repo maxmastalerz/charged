@@ -52,7 +52,19 @@ io.sockets.on('connection', function(client) {
 	client.on('returnToMenu', function() {
 		leave(io, client, rooms);
 	});
+
+	var timesPerSecond, distTraveledX, distTraveledY;
+	setInterval(function() {
+		if(timesPerSecond>18 || distTraveledY>9 || distTraveledX>9) {
+			leave(io, client, rooms);
+			client.emit('errorMessage', 'You have been kicked for hacking!');
+		}
+		timesPerSecond = distTraveledX = distTraveledY = 0;
+	}, 1000);
 	client.on('move', function(deltaX, deltaY) {
+		if(deltaX!==0) { distTraveledX++; }
+		if(deltaY!==0) { distTraveledY++; }
+		timesPerSecond++;
 		move(io, client, rooms, deltaX, deltaY);
 	});
 	client.on('sendchat', function(message) {

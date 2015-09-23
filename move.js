@@ -31,15 +31,17 @@ function movePlayer(client, rooms, deltaX, deltaY) {
 }
 
 module.exports = function(io, client, rooms, deltaX, deltaY) {
-	if(!hackedMovement(client, deltaX, deltaY) && validDestination(client, rooms, deltaX, deltaY)) {
-		decideBlockTrail(client, rooms);
+	if(client.room!==null) {
+		if(!hackedMovement(client, deltaX, deltaY) && validDestination(client, rooms, deltaX, deltaY)) {
+			decideBlockTrail(client, rooms);
 
-		if(pickedUpBomb(client, rooms, deltaX, deltaY)) {
-			client.bombs++;
-			client.emit('updateBombs', client.bombs);
+			if(pickedUpBomb(client, rooms, deltaX, deltaY)) {
+				client.bombs++;
+				client.emit('updateBombs', client.bombs);
+			}
+
+			movePlayer(client, rooms, deltaX, deltaY);
+			meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 		}
-
-		movePlayer(client, rooms, deltaX, deltaY);
-		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 	}
 };
