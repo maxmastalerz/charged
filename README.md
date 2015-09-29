@@ -10,9 +10,10 @@ Currently the game's goal has not been determined. You are able to kill other pl
 
 ## Game controls
 
-Move with ARROW KEYS
+Move with WASD keys
 Place bombs with SPACE
-Switch between chat and game with ENTER
+Switch between game and chat with 'T' & ESC
+ENTER will send your message and focus back on the game
 
 ## Contribute
 
