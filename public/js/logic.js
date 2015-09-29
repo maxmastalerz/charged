@@ -158,6 +158,8 @@ $(document).ready(function($) {
 				if(downCount>0) { downCount--; }
 				server.emit('move', 0, 1);
 			}
+		} else {
+			upCount = downCount = 0;
 		}
 		if(!(holdingLeft && holdingRight)) {
 			if((leftCount>0) || holdingLeft) {
@@ -167,6 +169,8 @@ $(document).ready(function($) {
 				if(rightCount>0) { rightCount--; }
 				server.emit('move', 1, 0);
 			}
+		} else {
+			leftCount = rightCount = 0;
 		}
 		if((spaceCount>0) || holdingSpace) {
 			if(spaceCount>0) { spaceCount--; }
