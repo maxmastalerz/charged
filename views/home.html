@@ -12,7 +12,11 @@
 
 		<canvas id="game" tabindex="1"></canvas>
 		<div id="visibleAtPlay" style="display: none;">
-			<div id="roomList"></div>
+			<div id="roomList">
+				<div style="font-size: 5.5vh; font-family: Bit; text-align: center; color: grey">
+					&nbsp;Rooms<span class="prev" onclick='pageChng("+JSON.stringify(rooms)+", -1)'>←</span><span class='mext' onclick='pageChng("+JSON.stringify(rooms)+", 1)'>→</span>
+				</div>
+			</div>
 			<div id="roomCreator">
 				<h2>Room Creator</h2>
 				<input type="text" id="roomname" placeholder="Room Name" style="width: 48vh; height: 2vh; margin-left: 3vh;"/><br/>
