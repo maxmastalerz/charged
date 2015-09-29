@@ -150,19 +150,23 @@ $(document).ready(function($) {
 		if(e.which==32) { holdingSpace = false; }
 	});
 	setInterval(function() {
-		if((upCount>0) || holdingUp) {
-			if(upCount>0) { upCount--; }
-			server.emit('move', 0, -1);
-		} else if((downCount>0) || holdingDown) {
-			if(downCount>0) { downCount--; }
-			server.emit('move', 0, 1);
+		if(!(holdingUp && holdingDown)) {
+			if((upCount>0) || holdingUp) {
+				if(upCount>0) { upCount--; }
+				server.emit('move', 0, -1);
+			} else if((downCount>0) || holdingDown) {
+				if(downCount>0) { downCount--; }
+				server.emit('move', 0, 1);
+			}
 		}
-		if((leftCount>0) || holdingLeft) {
-			if(leftCount>0) { leftCount--; }
-			server.emit('move', -1, 0);
-		} else if((rightCount>0) || holdingRight) {
-			if(rightCount>0) { rightCount--; }
-			server.emit('move', 1, 0);
+		if(!(holdingLeft && holdingRight)) {
+			if((leftCount>0) || holdingLeft) {
+				if(leftCount>0) { leftCount--; }
+				server.emit('move', -1, 0);
+			} else if((rightCount>0) || holdingRight) {
+				if(rightCount>0) { rightCount--; }
+				server.emit('move', 1, 0);
+			}
 		}
 		if((spaceCount>0) || holdingSpace) {
 			if(spaceCount>0) { spaceCount--; }
