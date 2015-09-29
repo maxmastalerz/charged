@@ -11,7 +11,6 @@ $(document).ready(function($) {
 		bombCount, lifeCount,
 		w, h,			//w and h of the game board, not the canvas.
 		localMap,
-		focusedOnGame = false,
 		atMenu = true;
 
 	calcCanvasSizing();
@@ -122,27 +121,32 @@ $(document).ready(function($) {
 	});
 
 	var holdingUp = false, holdingDown = false, holdingLeft = false, holdingRight = false, holdingSpace = false, upCount = 0, downCount = 0, leftCount = 0, rightCount = 0, spaceCount = 0;
-	$(document).keypress(function(e) {
-		if(e.keyCode===13 && focusedOnGame) {	//Enter changes focus between game and chat
+	$('#game').keydown(function(e) {
+		if(e.which==84) {			//'T'
 			$('#data').focus();
-			focusedOnGame = false;
-		} else if(e.keyCode===13 && !focusedOnGame) {
+			setTimeout(function() { $('#data').val($('#data').val().substring(0, $('#data').val().length - 1)); }, 1);
+		}
+	});
+	$('#data').keydown(function(e) {
+		if(e.which==27) {			//ESC
 			$('#game').focus();
-			focusedOnGame = true;
+		} else if(e.which==13) {	//ENTER
+			$('#datasend').trigger('click');
+			$('#game').focus();
 		}
 	});
 	$('#game').keydown(function(e) {
-		if(e.which==37 && !holdingLeft) { holdingLeft = true; leftCount++; }
-		if(e.which==38 && !holdingUp) { holdingUp = true; upCount++; }
-		if(e.which==39 && !holdingRight) { holdingRight = true; rightCount++; }
-		if(e.which==40 && !holdingDown) { holdingDown = true;  downCount++; }
+		if(e.which==65 && !holdingLeft) { holdingLeft = true; leftCount++; }
+		if(e.which==87 && !holdingUp) { holdingUp = true; upCount++; }
+		if(e.which==68 && !holdingRight) { holdingRight = true; rightCount++; }
+		if(e.which==83 && !holdingDown) { holdingDown = true;  downCount++; }
 		if(e.which==32 && !holdingSpace) { holdingSpace = true; spaceCount++; }
 	});
 	$('#game').keyup(function(e) {
-		if(e.which==37) { holdingLeft = false; }
-		if(e.which==38) { holdingUp = false; }
-		if(e.which==39) { holdingRight = false; }
-		if(e.which==40) { holdingDown = false; }
+		if(e.which==65) { holdingLeft = false; }
+		if(e.which==87) { holdingUp = false; }
+		if(e.which==68) { holdingRight = false; }
+		if(e.which==83) { holdingDown = false; }
 		if(e.which==32) { holdingSpace = false; }
 	});
 	setInterval(function() {
