@@ -176,7 +176,7 @@ $(document).ready(function($) {
 			if(spaceCount>0) { spaceCount--; }
 			server.emit('placeBomb');
 		}
-	}, 120);
+	}, 122);
 	/*Message for the Hackers:
 	1. Changing this value may spam the server and will cause your session to be unstable/prone to freezing and lagging.
 	2. The interval of server emitions is moderated by the server, and will result in a temporary IP ban.
