@@ -1,7 +1,7 @@
 var page = 0;
 
 function pageChng(rooms, diff) {
-	var roomsPerPage = 14;
+	var roomsPerPage = 13;
 	var pageCount = Math.ceil(rooms.length/roomsPerPage);
 	page+=diff;
 	var start = page*roomsPerPage;
