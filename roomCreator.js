@@ -32,13 +32,13 @@ function generateMap(rooms, room) {
 	for(var y=0;y<rooms[room].mapSize;y++) {
 		for(var x=0;x<rooms[room].mapSize;x++) {
 			if(y===0 || y===rooms[room].mapSize-1 || x===0 || x===rooms[room].mapSize-1) {
-				rooms[room].map[y][x] = '2';	//invisible wall
+				rooms[room].map[y][x] = {type: 'indestructible'};
 			} else {
 				var num = Math.floor((Math.random()*10)+0);
 				if(num<density) {
-					rooms[room].map[y][x] = '1';
+					rooms[room].map[y][x] = {type: 'block'};
 				} else {
-					rooms[room].map[y][x] = '0';
+					rooms[room].map[y][x] = {type: 'air'};
 				}
 			}
 		}

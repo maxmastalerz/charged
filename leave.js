@@ -18,7 +18,7 @@ function deleteRoomIfEmpty(client, rooms) {
 
 module.exports = function(io, client, rooms) {
 	if(client.room!==null) {
-		rooms[client.room].map[client.yPos][client.xPos] = '0';
+		rooms[client.room].map[client.yPos][client.xPos] = {type: 'air'};
 		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 
 		removeFromPlayerList(io, client, rooms);

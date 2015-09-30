@@ -10,6 +10,7 @@ var move = require('./move.js');
 var join = require('./join.js');
 var create = require('./roomCreator.js');
 var bombPlacement = require('./bombPlacement.js');
+var wallPlacement = require('./wallPlacement.js');
 var meth = require('./meth.js');	//IMPORTANT! METHODS MUST BE LOADED LAST!
 require('./express-routes.js')(app);
 
@@ -33,6 +34,9 @@ io.sockets.on('connection', function(client) {
 
 	client.on('placeBomb', function() {
 		bombPlacement(io, client, rooms);
+	});
+	client.on('placeWall', function() {
+		wallPlacement(io, client, rooms);
 	});
 	client.on('createRoom', function(room, maxPlayers, mapSize, mapVisibility, bombDelay, roomPassword) {
 		create(io, client, rooms, room, maxPlayers, mapSize, mapVisibility, bombDelay, roomPassword);

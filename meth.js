@@ -109,9 +109,9 @@ module.exports = {
 		client.yPos = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
 
 		//Sort of smart spawning makes sure you don't end up ontop of an emeny/bomb/blocked in.
-		if(rooms[client.room].map[client.yPos][client.xPos]==='0' && rooms[client.room].map[client.yPos+1][client.xPos]==='0' && rooms[client.room].map[client.yPos+1][client.xPos+1]==='0') {
-			client.bombUnderneath = false;
-			rooms[client.room].map[client.yPos][client.xPos] = { id: client.id, username: client.username, colour: client.colour, bombUnderneath: false };
+		if(rooms[client.room].map[client.yPos][client.xPos].type==='air' && rooms[client.room].map[client.yPos+1][client.xPos].type==='air' && rooms[client.room].map[client.yPos+1][client.xPos+1].type==='air') {
+			client.entityUnderneath = null;
+			rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: client.username, colour: client.colour, entityUnderneath: null };
 			module.exports.updateMiniMapsInYourRoom(ns, rooms, client);
 		} else {
 			module.exports.spawn(ns,rooms, client);	//Might recurse forever if no spawn point is found. Lol
@@ -144,7 +144,7 @@ module.exports = {
 				if(client.room!==null) {
 					delete rooms[client.room].players[oldName];
 					rooms[client.room].players[newName] = client.id;
-					rooms[client.room].map[client.yPos][client.xPos] = { id: client.id, username: newName, colour: client.colour };
+					rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: newName, colour: client.colour };
 					module.exports.updatePlayersListIn(io, rooms, client.room);
 					module.exports.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 				}

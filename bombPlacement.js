@@ -5,11 +5,11 @@ function spawnPickup(client, rooms) {
 	while(true) {
 		x = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
 		y = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
-		if(rooms[client.room].map[y][x]==='0') {
+		if(rooms[client.room].map[y][x].type==='air') {
 			break;
 		}
 	}
-	rooms[client.room].map[y][x] = '4';
+	rooms[client.room].map[y][x] = {type: 'crate'};
 }
 
 function playersNearbySpawn(io, client, rooms, bombY, bombX) {
@@ -26,8 +26,8 @@ function scheduleRespawn(io, client, rooms, bombY, bombX) {
 		if(client.room!==null) {
 			if(playersNearbySpawn(io, client, rooms, bombY, bombX)) {
 				scheduleRespawn(io, client, rooms, bombY,bombX);
-			} else if(rooms[client.room].map[bombY][bombX]==='0') {
-				rooms[client.room].map[bombY][bombX] = '1';
+			} else if(rooms[client.room].map[bombY][bombX].type==='air') {
+				rooms[client.room].map[bombY][bombX].type = 'block';
 				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 			}
 		}
@@ -35,33 +35,33 @@ function scheduleRespawn(io, client, rooms, bombY, bombX) {
 }
 
 function canPlaceBomb(client) {
-	if(client.room!==null && !client.bombUnderneath && client.bombs>0) {
+	if(client.room!==null && client.entityUnderneath===null && client.bombs>0) {
 		return true;
 	}
 }
 
 function destroyBlocks(io, client, rooms, bombY, bombX) {
 	for(var i=-2;i<=2;i++) {
-		if((bombY+i)===rooms[client.room].mapSize || (bombY+i)===rooms[client.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || rooms[client.room].map[bombY+i][bombX]==='4') {
+		if((bombY+i)===rooms[client.room].mapSize || (bombY+i)===rooms[client.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || rooms[client.room].map[bombY+i][bombX].type==='crate') {
 			continue;
 		} else {
-			if(rooms[client.room].map[bombY+i][bombX]!=='0') {
-				if(rooms[client.room].map[bombY+i][bombX]!=='3' && rooms[client.room].map[bombY+i][bombX].username===undefined) {
+			if(rooms[client.room].map[bombY+i][bombX].type!=='air') {
+				if(rooms[client.room].map[bombY+i][bombX].type!=='bomb' && rooms[client.room].map[bombY+i][bombX].type!=='player') {
 					scheduleRespawn(io, client, rooms, bombY+i,bombX);
 				}
-				rooms[client.room].map[bombY+i][bombX] = '0';
+				rooms[client.room].map[bombY+i][bombX].type = 'air';
 			}
 		}
 	}
 	for(var ii=-2;ii<=2;ii++) {
-		if((bombX+ii)===rooms[client.room].mapSize || (bombX+ii)===rooms[client.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || rooms[client.room].map[bombY][bombX+ii]==='4') {
+		if((bombX+ii)===rooms[client.room].mapSize || (bombX+ii)===rooms[client.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || rooms[client.room].map[bombY][bombX+ii].type==='crate') {
 			continue;
 		} else {
-			if(rooms[client.room].map[bombY][bombX+ii]!=='0') {
-				if(rooms[client.room].map[bombY][bombX+ii]!=='3' && rooms[client.room].map[bombY][bombX+ii].username===undefined) {
+			if(rooms[client.room].map[bombY][bombX+ii].type!=='air') {
+				if(rooms[client.room].map[bombY][bombX+ii].type!=='bomb' && rooms[client.room].map[bombY][bombX+ii].type!=='player') {
 					scheduleRespawn(io, client, rooms, bombY,bombX+ii);
 				}
-				rooms[client.room].map[bombY][bombX+ii] = '0';
+				rooms[client.room].map[bombY][bombX+ii] = {type: 'air'};
 			}
 		}
 	}
@@ -72,7 +72,7 @@ function destroyBlocks(io, client, rooms, bombY, bombX) {
 function checkForDeath(io, client, rooms) {
 	for(var username in rooms[client.room].players) {
 		var iteratedClient = meth.clientFromUsername(io.of("/"), username, client);
-		if(rooms[client.room].map[iteratedClient.yPos][iteratedClient.xPos]=='0') {
+		if(rooms[client.room].map[iteratedClient.yPos][iteratedClient.xPos].type=='air') {
 			iteratedClient.lives--;
 			iteratedClient.emit('updateLives', iteratedClient.lives);
 			if(iteratedClient.lives===0) {
@@ -94,10 +94,10 @@ module.exports = function(io, client, rooms) {
 	if(canPlaceBomb(client)) {
 		var bombY = client.yPos;
 		var bombX = client.xPos;
-		client.bombUnderneath = true;
+		client.entityUnderneath = 'bomb';
 		client.bombs--;
 		client.emit('updateBombs', client.bombs);
-		rooms[client.room].map[client.yPos][client.xPos] = { id: client.id, username: client.username, colour: client.colour, bombUnderneath: client.bombUnderneath };
+		rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: client.username, colour: client.colour, entityUnderneath: client.entityUnderneath };
 		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 
 		setTimeout(function() {

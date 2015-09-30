@@ -3,7 +3,6 @@ var leave = require('./leave.js');
 
 function connectToRoom(io, client, rooms, newRoom) {
 	leave(io, client, rooms);
-
 	client.join(newRoom);
 	client.emit('joinedRoom');
 	client.emit('updateChat', 'SERVER', '#00FFFF', 'You have joined \'' + newRoom+'\'');

@@ -22,7 +22,6 @@ $(document).ready(function($) {
 			w, h,			//w and h of the game board, not the canvas.
 			localMap,
 			atMenu = true;
-
 		calcCanvasSizing();
 		window.onresize = function(event) {
 			calcCanvasSizing();
@@ -52,6 +51,7 @@ $(document).ready(function($) {
 			window.removeEventListener("mousedown", doMouseDown, false);
 			$('#visibleInRoom').show();
 			$('#visibleAtPlay').hide();
+			$('#game').focus();
 			atMenu=false;
 		});
 		server.on('leftRoom', function() {
@@ -130,7 +130,7 @@ $(document).ready(function($) {
 			});
 		});
 
-		var holdingUp = false, holdingDown = false, holdingLeft = false, holdingRight = false, holdingSpace = false, upCount = 0, downCount = 0, leftCount = 0, rightCount = 0, spaceCount = 0;
+		var holdingUp = false, holdingDown = false, holdingLeft = false, holdingRight = false, holdingSpace = false, holding1 = false, upCount = 0, downCount = 0, leftCount = 0, rightCount = 0, spaceCount = 0, count1 = 0;
 		$('#game').keydown(function(e) {
 			if(e.which==84) {			//'T'
 				$('#data').focus();
@@ -151,6 +151,7 @@ $(document).ready(function($) {
 			if(e.which==68 && !holdingRight) { holdingRight = true; rightCount++; }
 			if(e.which==83 && !holdingDown) { holdingDown = true;  downCount++; }
 			if(e.which==32 && !holdingSpace) { holdingSpace = true; spaceCount++; }
+			if(e.which==49 && !holding1) { holding1 = true; count1++; }
 		});
 		$('#game').keyup(function(e) {
 			if(e.which==65) { holdingLeft = false; }
@@ -158,6 +159,7 @@ $(document).ready(function($) {
 			if(e.which==68) { holdingRight = false; }
 			if(e.which==83) { holdingDown = false; }
 			if(e.which==32) { holdingSpace = false; }
+			if(e.which==49) { holding1 = false; }
 		});
 		setInterval(function() {
 			if(!(holdingUp && holdingDown)) {
@@ -186,6 +188,10 @@ $(document).ready(function($) {
 				if(spaceCount>0) { spaceCount--; }
 				server.emit('placeBomb');
 			}
+			if((count1>0) || holding1) {
+				if(count1>0) { count1--; }
+				server.emit('placeWall');
+			}
 		}, 122);
 		/*Message for the Hackers:
 		1. Changing this value may spam the server and will cause your session to be unstable/prone to freezing and lagging.
@@ -202,32 +208,37 @@ $(document).ready(function($) {
 
 			for(var y=0;y<mapSize;y++) {			//Y
 				for(var x=0;x<mapSize;x++) {		//X
-					if(map[y][x]==='0') {			//Empty space
-						ctx.fillStyle = "black";
-						ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
-					} else if(map[y][x]==='1') {	//Regular wall
-						ctx.fillStyle = "#3D3D3D";
-						ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
-					} else if(map[y][x]==='2') {	//Indestructable wall
-						ctx.fillStyle="black";
-						ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
-					} else if(map[y][x]==='3') { 	//BOMB
-						ctx.drawImage(images.bomb, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
-					} else if(map[y][x]==='4') {	//BOMB pickup
-						ctx.drawImage(images.crate, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
-					}
+					if(map[y][x]!=='0') {
+						if(map[y][x].type==='air') {
+							ctx.fillStyle = "black";
+							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
+						} else if(map[y][x].type==='block') {
+							ctx.fillStyle = "#3D3D3D";
+							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
+						} else if(map[y][x].type==='indestructible') {
+							ctx.fillStyle="black";
+							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
+						} else if(map[y][x].type==='bomb') {
+							ctx.drawImage(images.bomb, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
+						} else if(map[y][x].type==='wall') {
+							ctx.fillStyle = map[y][x].colour;
+							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
+						} else if(map[y][x].type==='crate') {
+							ctx.drawImage(images.crate, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
+						}
 
-					if(map[y][x].username!==undefined && map[y][x].bombUnderneath===true) {
-						ctx.fillStyle = map[y][x].colour;
-						ctx.textAlign = "center";
-						ctx.fillText(map[y][x].username,((x)*(tileS+mapPad))+(tileS/2),((y)*(tileS+mapPad))-(tileS/2));
-						ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
-						ctx.drawImage(images.bomb, (x)*(tileS+mapPad)-1, (y)*(tileS+mapPad)-1, tileS+mapPad, tileS+mapPad);
-					} else if(map[y][x].username!==undefined) {						//Player
-						ctx.fillStyle = map[y][x].colour;
-						ctx.textAlign = "center";
-						ctx.fillText(map[y][x].username,((x)*(tileS+mapPad))+(tileS/2),((y)*(tileS+mapPad))-(tileS/2));
-						ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
+						if(map[y][x].type==='player' && map[y][x].entityUnderneath==='bomb') {
+							ctx.fillStyle = map[y][x].colour;
+							ctx.textAlign = "center";
+							ctx.fillText(map[y][x].username,((x)*(tileS+mapPad))+(tileS/2),((y)*(tileS+mapPad))-(tileS/2));
+							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
+							ctx.drawImage(images.bomb, (x)*(tileS+mapPad)-1, (y)*(tileS+mapPad)-1, tileS+mapPad, tileS+mapPad);
+						} else if(map[y][x].type==='player') {
+							ctx.fillStyle = map[y][x].colour;
+							ctx.textAlign = "center";
+							ctx.fillText(map[y][x].username,((x)*(tileS+mapPad))+(tileS/2),((y)*(tileS+mapPad))-(tileS/2));
+							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
+						}
 					}
 				}
 			}
@@ -295,16 +306,6 @@ $(document).ready(function($) {
 				drawMenu(w, h);
 			}
 		}
-		function debounce(fn, delay) {
-			var timer = null;
-			return function() {
-				var context = this, args = arguments;
-				clearTimeout(timer);
-				timer = setTimeout(function() {
-					fn.apply(context, args);
-				}, delay);
-			};
-		}
 		function scrollChat() {
 			var height = 0;
 			$('#conversation p').each(function(i, value){
@@ -313,7 +314,6 @@ $(document).ready(function($) {
 			height += '';
 			$('#conversation').animate({scrollTop: height});
 		}
-
 	});
 });
 function loadImages(sources, callback) {

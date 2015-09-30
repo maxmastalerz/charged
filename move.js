@@ -6,28 +6,36 @@ function hackedMovement(client, deltaX, deltaY) {
 	}
 }
 function validDestination(client, rooms, deltaX, deltaY) {
-	if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='0' || rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='4') {
+	if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].type==='air' || rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].type==='crate') {
 		return true;
+	}
+	if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].type==='wall') {
+		if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].colour===client.colour) {
+			return true;
+		}
 	}
 }
 function pickedUpBomb(client, rooms, deltaX, deltaY) {
-	if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX]==='4') {
-		return true;
+	if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].entity!==undefined) {
+		if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].type==='crate') {
+			return true;
+		}
 	}
 }
 function decideBlockTrail(client, rooms) {	//Determines whether to leave a empty block or a bomb at the player's previous position.
-	if(client.bombUnderneath===false) {
-		rooms[client.room].map[client.yPos][client.xPos] = '0';
-	} else {
-		rooms[client.room].map[client.yPos][client.xPos] = '3';
-		//rooms[client.room].map[client.yPos][client.xPos] = '1';//wall placing?
+	if(client.entityUnderneath===null) {
+		rooms[client.room].map[client.yPos][client.xPos] = {type: 'air'};
+	} else if(client.entityUnderneath==='bomb') {
+		rooms[client.room].map[client.yPos][client.xPos] = {type: 'bomb'};
+	} else if(client.entityUnderneath==='wall') {
+		rooms[client.room].map[client.yPos][client.xPos] = {type: 'wall', colour: client.colour};
 	}
-	client.bombUnderneath = false;
+	client.entityUnderneath = null;
 }
 function movePlayer(client, rooms, deltaX, deltaY) {
 	client.xPos+=deltaX;
 	client.yPos+=deltaY;
-	rooms[client.room].map[client.yPos][client.xPos] = { id: client.id, username: client.username, colour: client.colour, bombUnderneath: client.bombUnderneath };
+	rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: client.username, colour: client.colour, entityUnderneath: client.entityUnderneath };
 }
 
 module.exports = function(io, client, rooms, deltaX, deltaY) {
@@ -40,7 +48,15 @@ module.exports = function(io, client, rooms, deltaX, deltaY) {
 				client.emit('updateBombs', client.bombs);
 			}
 
+			var walkedOnWall = false;
+			if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].type==='wall') {
+				if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].colour===client.colour) {
+					walkedOnWall = true;
+				}
+			}
+
 			movePlayer(client, rooms, deltaX, deltaY);
+			if(walkedOnWall) { client.entityUnderneath='wall'; }
 			meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 		}
 	}
