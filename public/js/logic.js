@@ -110,6 +110,7 @@ $(document).ready(function($) {
 			$('#roombutton').click(function(){
 				var name = $('#roomname').val();
 				var maxPlayers = $('#maxPlayers').val();
+				var gameMode = $('#gameMode').val();
 				var mapSize = $('#mapSize').val();
 				var mapVisibility = $('#mapVisibility').val();
 				var bombDelay = $('#bombDelay').val();
@@ -121,7 +122,7 @@ $(document).ready(function($) {
 				$('#mapVisibility').val('');
 				$('#bombDelay').val('');
 				$('#roomPassword').val('');
-				server.emit('createRoom', name, maxPlayers, mapSize, mapVisibility, bombDelay, roomPassword);
+				server.emit('createRoom', name, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword);
 			});
 			$('#returnToMenu').click(function(e) {
 				server.emit('returnToMenu');

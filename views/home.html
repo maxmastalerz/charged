@@ -20,13 +20,21 @@
 			<div id="roomCreator">
 				<h2>Room Creator</h2>
 				<input type="text" id="roomname" placeholder="Room Name" style="width: 48vh; height: 2vh; margin-left: 3vh;"/><br/>
-				<select id="maxPlayers" style="width: 48.3vh;  height: 2.5vh; margin-left: 3vh;">
+				<select id="maxPlayers" style="width: 23.9vh;  height: 2.5vh; margin-left: 3vh;">
 					<option value="6">6 player limit</option>
 					<option value="5">5 player limit</option>
 					<option value="4">4 player limit</option>
 					<option value="3">3 player limit</option>
 					<option value="2">2 player limit</option>
-				</select><br/>
+				</select>
+				<select id="gameMode" style="width: 23.9vh;  height: 2.5vh; margin-left: 0.05vh;">
+					<option value="ffa">Free For All</option>
+					<option value="teams">Teams</option>
+					<option value="ctf">Capture The Flag</option>
+					<option value="koth">King Of The Hill</option>
+					<option value="hvb">Human Vs Bots</option>
+				</select>
+				<br/>
 				<h2>Advanced options</h2>
 				<input type="text" id="mapSize" placeholder="Map size (10-70)" style="width: 23.4vh; height: 2vh; margin-left: 3vh"/>
 				<input type="text" id="mapVisibility" placeholder="Map visibility (5-35)" style="width: 23.4vh;  height: 2vh;"/>
