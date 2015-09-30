@@ -89,10 +89,6 @@ $(document).ready(function($) {
 			}
 		});
 
-		server.on('updateRooms', function (rooms) {
-			pageChng(rooms, 0);
-		});
-
 		$(function(){
 			$('#datasend').click( function() {
 				var message = $('#data').val();
@@ -316,6 +312,11 @@ $(document).ready(function($) {
 		}
 	});
 });
+
+server.on('updateRooms', function (rooms) {
+	pageChng(rooms, 0);
+});
+
 function loadImages(sources, callback) {
 	var images = {};
 	var loadedImages = 0;
@@ -334,3 +335,4 @@ function loadImages(sources, callback) {
 		images[src].src = sources[src];
 	}
 }
+
