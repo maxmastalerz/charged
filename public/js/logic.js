@@ -8,6 +8,8 @@ var sources = {
 	bomb: 'img/bomb.png',
 	heart: 'img/heart.png',
 	crate: 'img/crate.png',
+	redflag: 'img/redflag.png',
+	blueflag: 'img/blueflag.png',
 	explosion1: 'img/1.png',
 	explosion2: 'img/2.png',
 	explosion3: 'img/3.png',
@@ -126,7 +128,7 @@ $(document).ready(function($) {
 			});
 		});
 
-		var holdingUp = false, holdingDown = false, holdingLeft = false, holdingRight = false, holdingSpace = false, holding1 = false, upCount = 0, downCount = 0, leftCount = 0, rightCount = 0, spaceCount = 0, count1 = 0;
+		var holdingUp = false, holdingDown = false, holdingLeft = false, holdingRight = false, holdingSpace = false, holdingB = false, upCount = 0, downCount = 0, leftCount = 0, rightCount = 0, spaceCount = 0, bCount = 0;
 		$('#game').keydown(function(e) {
 			if(e.which==84) {			//'T'
 				$('#data').focus();
@@ -142,12 +144,13 @@ $(document).ready(function($) {
 			}
 		});
 		$('#game').keydown(function(e) {
+			console.log(e.which);
 			if(e.which==65 && !holdingLeft) { holdingLeft = true; leftCount++; }
 			if(e.which==87 && !holdingUp) { holdingUp = true; upCount++; }
 			if(e.which==68 && !holdingRight) { holdingRight = true; rightCount++; }
 			if(e.which==83 && !holdingDown) { holdingDown = true;  downCount++; }
 			if(e.which==32 && !holdingSpace) { holdingSpace = true; spaceCount++; }
-			if(e.which==49 && !holding1) { holding1 = true; count1++; }
+			if(e.which==66 && !holdingB) { holdingB = true; bCount++; }
 		});
 		$('#game').keyup(function(e) {
 			if(e.which==65) { holdingLeft = false; }
@@ -155,7 +158,7 @@ $(document).ready(function($) {
 			if(e.which==68) { holdingRight = false; }
 			if(e.which==83) { holdingDown = false; }
 			if(e.which==32) { holdingSpace = false; }
-			if(e.which==49) { holding1 = false; }
+			if(e.which==66) { holdingB = false; }
 		});
 		setInterval(function() {
 			if(!(holdingUp && holdingDown)) {
@@ -184,8 +187,8 @@ $(document).ready(function($) {
 				if(spaceCount>0) { spaceCount--; }
 				server.emit('placeBomb');
 			}
-			if((count1>0) || holding1) {
-				if(count1>0) { count1--; }
+			if((bCount>0) || holdingB) {
+				if(bCount>0) { bCount--; }
 				server.emit('placeWall');
 			}
 		}, 122);
@@ -212,7 +215,7 @@ $(document).ready(function($) {
 							ctx.fillStyle = "#3D3D3D";
 							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
 						} else if(map[y][x].type==='indestructible') {
-							ctx.fillStyle="black";
+							ctx.fillStyle=map[y][x].colour;
 							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
 						} else if(map[y][x].type==='bomb') {
 							ctx.drawImage(images.bomb, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
@@ -221,6 +224,12 @@ $(document).ready(function($) {
 							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
 						} else if(map[y][x].type==='crate') {
 							ctx.drawImage(images.crate, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
+						} else if(map[y][x].type==='flag') {
+							if(map[y][x].colour==='red') {
+								ctx.drawImage(images.redflag, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
+							} else if(map[y][x].colour==='blue') {
+								ctx.drawImage(images.blueflag, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
+							}
 						}
 
 						if(map[y][x].type==='player' && map[y][x].entityUnderneath==='bomb') {

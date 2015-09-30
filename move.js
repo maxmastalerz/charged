@@ -16,10 +16,8 @@ function validDestination(client, rooms, deltaX, deltaY) {
 	}
 }
 function pickedUpBomb(client, rooms, deltaX, deltaY) {
-	if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].entity!==undefined) {
-		if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].type==='crate') {
-			return true;
-		}
+	if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].type==='crate') {
+		return true;
 	}
 }
 function decideBlockTrail(client, rooms) {	//Determines whether to leave a empty block or a bomb at the player's previous position.

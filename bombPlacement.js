@@ -42,7 +42,7 @@ function canPlaceBomb(client) {
 
 function destroyBlocks(io, client, rooms, bombY, bombX) {
 	for(var i=-2;i<=2;i++) {
-		if((bombY+i)===rooms[client.room].mapSize || (bombY+i)===rooms[client.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || rooms[client.room].map[bombY+i][bombX].type==='crate') {
+		if((bombY+i)===rooms[client.room].mapSize || (bombY+i)===rooms[client.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || rooms[client.room].map[bombY+i][bombX].type==='crate' || rooms[client.room].map[bombY+i][bombX].type==='indestructible') {
 			continue;
 		} else {
 			if(rooms[client.room].map[bombY+i][bombX].type!=='air') {
@@ -54,7 +54,7 @@ function destroyBlocks(io, client, rooms, bombY, bombX) {
 		}
 	}
 	for(var ii=-2;ii<=2;ii++) {
-		if((bombX+ii)===rooms[client.room].mapSize || (bombX+ii)===rooms[client.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || rooms[client.room].map[bombY][bombX+ii].type==='crate') {
+		if((bombX+ii)===rooms[client.room].mapSize || (bombX+ii)===rooms[client.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || rooms[client.room].map[bombY][bombX+ii].type==='crate' || rooms[client.room].map[bombY][bombX+ii].type==='indestructible') {
 			continue;
 		} else {
 			if(rooms[client.room].map[bombY][bombX+ii].type!=='air') {

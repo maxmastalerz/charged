@@ -28,11 +28,25 @@ function noCreationErrors(client, rooms, room, maxPlayers, mapSize, mapVisibilit
 
 function generateMap(rooms, room) {
 	var density = 4;	//from 0 - 10. Lower values mean more space
+	/*var base = [
+		[1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,0,0,0,0,0,0,0,0,2,2,1],
+		[1,0,4,0,0,0,0,0,1,2,2,1],
+		[1,0,0,3,0,1,2,2,1,1,1,1],
+		[1,0,0,0,0,0,1,1,0,0,2,1],
+		[1,0,0,1,0,0,0,0,0,0,0,1],
+		[1,0,0,2,1,0,0,0,0,0,0,1],
+		[1,0,0,2,1,0,0,1,1,0,0,0],
+		[1,0,1,1,0,0,0,1,1,1,0,0],
+		[1,2,2,1,0,0,0,0,1,1,1,0],
+		[1,2,2,1,2,0,0,0,0,1,1,0],
+		[1,1,1,1,1,1,1,0,0,0,0,0]
+	];*/
 
 	for(var y=0;y<rooms[room].mapSize;y++) {
 		for(var x=0;x<rooms[room].mapSize;x++) {
 			if(y===0 || y===rooms[room].mapSize-1 || x===0 || x===rooms[room].mapSize-1) {
-				rooms[room].map[y][x] = {type: 'indestructible'};
+				rooms[room].map[y][x] = {type: 'indestructible', colour: 'black'};
 			} else {
 				var num = Math.floor((Math.random()*10)+0);
 				if(num<density) {
@@ -43,6 +57,22 @@ function generateMap(rooms, room) {
 			}
 		}
 	}
+
+	/*for(by=0;by<base.length;by++) {
+		for(bx=0;bx<base[0].length;bx++) {
+			if(base[by][bx]===0) {
+				rooms[room].map[by+1][bx+1] = {type: 'air'};
+			} else if(base[by][bx]===1) {
+				rooms[room].map[by+1][bx+1] = {type: 'indestructible', colour: 'red'};
+			} else if(base[by][bx]===2) {
+				rooms[room].map[by+1][bx+1] = {type: 'crate'};
+			} else if(base[by][bx]===3) {
+				rooms[room].map[by+1][bx+1] = {type: 'flag', colour: 'red'};
+			} else if(base[by][bx]===4) {
+				rooms[room].map[by+1][bx+1] = {type: 'flag', colour: 'blue'};
+			}
+		}
+	}*/
 }
 
 module.exports = function(io, client, rooms, room, maxPlayers, mapSize, mapVisibility, bombDelay, roomPassword) {
