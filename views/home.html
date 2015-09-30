@@ -13,13 +13,13 @@
 		<canvas id="game" tabindex="1"></canvas>
 		<div id="visibleAtPlay" style="display: none;">
 			<div id="roomList">
-				<div style="font-size: 5.5vh; font-family: Bit; text-align: center; color: grey">
+				<div style="font-size: 5.5vh; font-family: Bit; text-align: center; color: #4C767B">
 					&nbsp;Rooms<span class="prev" onclick='pageChng("+JSON.stringify(rooms)+", -1)'>←</span><span class='mext' onclick='pageChng("+JSON.stringify(rooms)+", 1)'>→</span>
 				</div>
 			</div>
 			<div id="roomCreator">
 				<h2>Room Creator</h2>
-				<input type="text" id="roomname" placeholder="Room Name" style="width: 48vh; height: 2vh; margin-left: 3vh;"/><br/>
+				<input type="text" id="roomname" placeholder="Room Name" style="width: 48vh; height: 2vh; margin-left: 3vh;"/>
 				<select id="maxPlayers" style="width: 23.9vh;  height: 2.5vh; margin-left: 3vh;">
 					<option value="6">6 player limit</option>
 					<option value="5">5 player limit</option>
@@ -34,7 +34,6 @@
 					<option value="koth">King Of The Hill</option>
 					<option value="hvb">Human Vs Bots</option>
 				</select>
-				<br/>
 				<h2>Advanced options</h2>
 				<input type="text" id="mapSize" placeholder="Map size (10-70)" style="width: 23.4vh; height: 2vh; margin-left: 3vh"/>
 				<input type="text" id="mapVisibility" placeholder="Map visibility (5-35)" style="width: 23.4vh;  height: 2vh;"/>

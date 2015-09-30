@@ -6,8 +6,8 @@
 html, body {
     margin: 0px;
     padding: 0px;
-    background-color: #000;
-    color: #FFF;
+    background-color: #334F52;
+    color: #000;
     height: 100%;
 	min-width: 570px;
 	overflow: hidden;
@@ -17,15 +17,15 @@ h1 {
 	font-size: 5.5vh;
 	font-family: Bit;
 	text-align: center;
-	color: grey;
+	color: #4C767B;
 }
 
 h2 {
 	font-size: 3.2vh;
 	font-family: Bit;
 	text-align: center;
-	color: grey;
-	margin: 2px 0px 2px 0px;
+	color: #4C767B;
+	margin: 1.5vh 0vh 1.5vh 0vh;
 }
 
 #game {
@@ -36,22 +36,37 @@ h2 {
 
 }
 	#roomList {
-		background-color: black;
+		background-color: #334F52;
 		position: absolute;
 	}
 	#roomCreator {
-		background-color: black;
+		background-color: #334F52;
 		position: absolute;
+		line-height: 2.0vh;
 	}
 		#roomCreator input, #roomCreator select {
-			background-color: grey;
-			border-color: black;
+			background-color: #4C767B;
+			color: #334F52;
+			font-weight: bold;
+			font-size: 2vh;
 			border: 1px solid;
 			margin: 0px;
+			padding: 0px;
+			display: inline-block;
 		}
 
-
-
+::-webkit-input-placeholder {
+    color: #334F52;
+}
+:-moz-placeholder {
+    color: #334F52;
+}
+::-moz-placeholder {
+    color: #334F52;
+}
+:-ms-input-placeholder {
+    color: #334F52;
+}
 
 #visibleInRoom {
 

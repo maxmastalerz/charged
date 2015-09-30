@@ -203,17 +203,20 @@ $(document).ready(function($) {
 			var mapSize = map.length;
 			var tileS = (w/mapSize)-mapPad;
 
-			ctx.fillStyle = "black";ctx.fillRect(0,0,canvas.width,canvas.height);
+			var col1 = '#4C767B';
+			var col2 = '#334F52';
+
+			ctx.fillStyle = col1;ctx.fillRect(0,0,canvas.width,canvas.height);
 			ctx.font = "10px Verdana";
 
 			for(var y=0;y<mapSize;y++) {			//Y
 				for(var x=0;x<mapSize;x++) {		//X
 					if(map[y][x]!=='0') {
 						if(map[y][x].type==='air') {
-							ctx.fillStyle = "black";
+							ctx.fillStyle = col1;
 							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
 						} else if(map[y][x].type==='block') {
-							ctx.fillStyle = "#3D3D3D";
+							ctx.fillStyle = col2;
 							ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
 						} else if(map[y][x].type==='indestructible') {
 							ctx.fillStyle=map[y][x].colour;
@@ -248,7 +251,7 @@ $(document).ready(function($) {
 					}
 				}
 			}
-			ctx.fillStyle = 'grey';
+			ctx.fillStyle = '#4C767B';
 			ctx.fillRect(0,h,canvas.width,canvas.height);
 			ctx.fillRect(w,0,canvas.width,canvas.height);
 
@@ -279,7 +282,7 @@ $(document).ready(function($) {
 			ctx.drawImage(images.grid, 0, 0, canvas.width, canvas.height);
 
 			ctx.font = canvas.width/37+'px Bit';
-			ctx.fillStyle = "grey";
+			ctx.fillStyle = "#4C767B";
 			ctx.fillText  ('Play', (canvas.width/2.24), canvas.height/2.32);
 			ctx.fillText  ('Instructions', (canvas.width/2.24), canvas.height/1.9);
 			ctx.fillText  ('Credits', (canvas.width/2.24), canvas.height/1.6);
