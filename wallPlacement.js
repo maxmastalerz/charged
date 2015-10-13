@@ -19,7 +19,7 @@ function scheduleDespawn(io, client, rooms, wallY, wallX) {
 				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 			}
 		}
-	}, 5000);	//delay between trying to respawn the block that was blown up
+	}, 5000);	//delay between trying to despawn the wall placed
 }
 
 function canPlaceWall(client) {

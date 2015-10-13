@@ -24,9 +24,11 @@ function playersNearbySpawn(io, client, rooms, bombY, bombX) {
 function scheduleRespawn(io, client, rooms, bombY, bombX) {
 	setTimeout(function() {
 		if(client.room!==null) {
-			if(playersNearbySpawn(io, client, rooms, bombY, bombX)) {
+			if(playersNearbySpawn(io, client, rooms, bombY, bombX) || rooms[client.room].map[bombY][bombX].type==="wall") {
+				console.log('Rescheduling block spawn');
 				scheduleRespawn(io, client, rooms, bombY,bombX);
 			} else if(rooms[client.room].map[bombY][bombX].type==='air') {
+				console.log('spawning block!');
 				rooms[client.room].map[bombY][bombX].type = 'block';
 				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 			}
