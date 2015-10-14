@@ -1,2 +1,1 @@
-1. No wall placing limit
-2. Menu font not loading on first attempt.
+1. Menu font not loading on first attempt.

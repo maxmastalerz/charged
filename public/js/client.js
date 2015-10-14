@@ -14,8 +14,14 @@ loadImages(function(imagesReturned) {
 	server.on('updateBombs', function(bombs) {
 		bombCount = bombs;
 	});
+	server.on('updateWallsInUse', function(wallsInUse) {
+		wallCount = 3-wallsInUse;
+	});
 	server.on('updateLives', function(lives) {
 		lifeCount = lives;
+	});
+	server.on('updateColour', function(col) {
+		colour = col;
 	});
 	server.on('roomProtected', function(room) {
 		server.emit('checkRoomPassword', room, prompt('This room requires a password: '));

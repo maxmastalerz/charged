@@ -76,6 +76,10 @@ function updateLocalMap(map) {
 	for(var b=0;b<bombCount;b++) {
 		ctx.drawImage(images.crate,w+4,(b*25)+4,22,22);
 	}
+	for(var wC=0;wC<wallCount;wC++) {
+		ctx.fillStyle = colour;
+		ctx.fillRect(w+4,(wC*25)+(b*25)+4,22,22);
+	}
 	for(var l=0;l<lifeCount;l++) {
 		ctx.drawImage(images.heart,w+4,(-l*25)+h,22,22);
 	}

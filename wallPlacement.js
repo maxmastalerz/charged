@@ -17,13 +17,16 @@ function scheduleDespawn(io, client, rooms, wallY, wallX) {
 			} else if(rooms[client.room].map[wallY][wallX].type==='wall') {
 				rooms[client.room].map[wallY][wallX] = {type: 'air'};
 				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+				client.wallsInUse--;
+				client.emit('updateWallsInUse', client.wallsInUse);
+				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 			}
 		}
-	}, 5000);	//delay between trying to despawn the wall placed
+	}, 7000);	//delay between trying to despawn the wall placed
 }
 
 function canPlaceWall(client) {
-	if(client.room!==null && client.entityUnderneath===null && client.bombs>0) {
+	if(client.room!==null && client.entityUnderneath===null && client.wallsInUse<3) {
 		return true;
 	}
 }
@@ -34,8 +37,8 @@ module.exports = function(io, client, rooms) {
 		var wallX = client.xPos;
 		client.entityUnderneath = 'wall';
 		scheduleDespawn(io, client, rooms, wallY, wallX);
-		//client.bombs--;
-		//client.emit('updateBombs', client.bombs);
+		client.wallsInUse++;
+		client.emit('updateWallsInUse', client.wallsInUse);
 		rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: client.username, colour: client.colour, entityUnderneath: client.entityUnderneath };
 		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
 	}

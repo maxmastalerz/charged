@@ -14,9 +14,11 @@ function connectToRoom(io, client, rooms, newRoom) {
 	meth.updateRoomLists(io.of("/"), rooms);
 
 	client.bombs = 7;
+	client.wallsInUse = 0;
 	client.lives = 3;
 	client.emit('updateLives', client.lives);
 	client.emit('updateBombs', client.bombs);
+	client.emit('updateWallsInUse', client.wallsInUse);
 	meth.spawn(io.of("/"), rooms, client);
 }
 
