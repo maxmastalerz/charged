@@ -1,1 +1,3 @@
 1. Menu font not loading on first attempt.
+2. Make team players different shades of red/blue.
+3. Make walls have a property called owner, where only owner(username) can walk through them.
