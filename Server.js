@@ -38,8 +38,8 @@ io.sockets.on('connection', function(client) {
 	client.on('placeWall', function() {
 		wallPlacement(io, client, rooms);
 	});
-	client.on('createRoom', function(room, maxPlayers, mapSize, mapVisibility, bombDelay, roomPassword) {
-		create(io, client, rooms, room, maxPlayers, mapSize, mapVisibility, bombDelay, roomPassword);
+	client.on('createRoom', function(room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) {
+		create(io, client, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword);
 	});
 	client.on('clearDebris', function() {
 		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);

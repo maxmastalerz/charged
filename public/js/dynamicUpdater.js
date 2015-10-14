@@ -55,8 +55,8 @@ function updateLocalMap(map) {
 					ctx.font = w*0.01+'pt Bit';
 					ctx.textAlign = "center";
 					ctx.fillText(map[y][x].username,((x)*(tileS+mapPad))+(tileS/2),((y)*(tileS+mapPad))-(tileS/2));
-					ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
 					ctx.fillStyle = map[y][x].colour;
+					ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
 					ctx.drawImage(images.bomb, (x)*(tileS+mapPad)-1, (y)*(tileS+mapPad)-1, tileS+mapPad, tileS+mapPad);
 				} else if(map[y][x].type==='player') {
 					ctx.fillStyle = '#FFF';

@@ -10,7 +10,10 @@ function validDestination(client, rooms, deltaX, deltaY) {
 		return true;
 	}
 	if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].type==='wall') {
-		if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].colour===client.colour) {
+		if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].owner===client.username && rooms[client.room].gameMode==='ffa') {
+			return true;
+		}
+		if(rooms[client.room].map[client.yPos+deltaY][client.xPos+deltaX].owner===client.team && rooms[client.room].gameMode==='ctf') {
 			return true;
 		}
 	}
@@ -26,7 +29,11 @@ function decideBlockTrail(client, rooms) {	//Determines whether to leave a empty
 	} else if(client.entityUnderneath==='bomb') {
 		rooms[client.room].map[client.yPos][client.xPos] = {type: 'bomb'};
 	} else if(client.entityUnderneath==='wall') {
-		rooms[client.room].map[client.yPos][client.xPos] = {type: 'wall', colour: client.colour};
+		if(rooms[client.room].gameMode==='ctf') {
+			rooms[client.room].map[client.yPos][client.xPos] = {type: 'wall', colour: client.colour, owner: client.team};
+		} else {
+			rooms[client.room].map[client.yPos][client.xPos] = {type: 'wall', colour: client.colour, owner: client.username};
+		}
 	}
 	client.entityUnderneath = null;
 }

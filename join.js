@@ -16,6 +16,13 @@ function connectToRoom(io, client, rooms, newRoom) {
 	client.bombs = 7;
 	client.wallsInUse = 0;
 	client.lives = 3;
+	if(rooms[client.room].gameMode==='ctf') {
+		if(rooms[client.room].playerCount%2===0) {
+			client.team = 'red';client.colour = '#B20000';
+		} else {
+			client.team = 'blue';client.colour = '#0000B2';
+		}
+	}
 	client.emit('updateLives', client.lives);
 	client.emit('updateBombs', client.bombs);
 	client.emit('updateWallsInUse', client.wallsInUse);

@@ -104,7 +104,7 @@ module.exports = {
 		}
 	},
 	spawn: function(ns, rooms, client) {
-		client.colour = getRandColour();
+		if(rooms[client.room].gameMode==='ffa') { client.colour = getRandColour(); }
 		client.emit('updateColour', client.colour);
 		client.xPos = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
 		client.yPos = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
