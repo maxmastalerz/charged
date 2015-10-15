@@ -16,14 +16,16 @@ wallPlacement: 	require('./wallPlacement.js')
 
 ## g : The game object
 
-| Code                                                        | Explanation                           |
-| ----------------------------------------------------------- | ------------------------------------- |
-| `g.io.of("/")`                                              | SocketIO's default namespace          |
-| `g.io.sockets.emit('eventName', optionalParameters);`       | Sends every client an event           |
-| `g.rooms`                                                   | An array of rooms on the server       |
+| Code                                                                                                | Explanation                                                  |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `g.io.of("/")`                                                                                      | SocketIO's default namespace                                 |
+| `g.io.sockets.emit('eventName', optionalParameters);`                                               | Sends every client an event                                  |
+| `g.rooms`                                                                                           | An array of rooms on the server                              |
 
 A specific room from the rooms array and it's properties shown:
-```g.rooms[roomName] = {
+
+```
+g.rooms[roomName] = {
 	players: {
 		username1: clientsId,
 		username2: clientsId
@@ -41,23 +43,17 @@ A specific room from the rooms array and it's properties shown:
 
 ## s : The server object.
 
-`s.emit('move', deltaX, deltaY)`														Tell the server what direction we wish to move to
-
-`s.emit('checkRoomPassword', room, prompt('Input the password: '))`						Asks server to check if the room password input was correct
-
-`s.emit('placeBomb')`																		//Places wall at the client's location
-
-`s.emit('placeWall')`																		//Places wall at the client's location
-
-`s.emit('sendchat', message)`																//Sends a chat message to the server for validation and distribution
-
-`s.emit('changeName', prompt('Choose a custom name'))`									//Changes player's name depending on their input.
-
-`s.emit('createRoom', name, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword)` 	//Only a room name is required. The rest is optional, and has def values
-
-`s.emit('returnToMenu')`																	//Kicks the player, and returns them to the menu.
-
-s.on('eventName', callback)																//Listen for emitions sent to the server
+| Code                                                                                                | Explanation                                                  |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `s.emit('move', deltaX, deltaY)`                                                                    | Tell server what direction we wish to move                   |
+| `s.emit('checkRoomPassword', room, prompt('Input the password: '))`                                 | Tell server to check if the room password input was correct  |
+| `s.emit('placeBomb')`                                                                               | Tell server that we want to place a bomb                     |
+| `s.emit('placeWall')`                                                                               | Tell sserver that we want to place a wall                    |
+| `s.emit('sendchat', message)`                                                                       | Tell server our desired chat message                         |
+| `s.emit('changeName', prompt('Choose a custom name'))`                                              | Tell server our newly desired username                       |
+| `s.emit('createRoom', name, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword)` | Tell server we wish to create a room with passed in settings |
+| `s.emit('returnToMenu')`                                                                            | Tell server we wish to leave the room and return to the menu |
+| `s.on('eventName', callback)`                                                                       | Server acts on the notification. Example: Moves the player   |
 
 ## c : The client object.
 
