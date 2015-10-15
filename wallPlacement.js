@@ -2,7 +2,7 @@ var m = require('./methods.js');
 
 function playersNearbySpawn(g, c, wallY, wallX) {
 	for(var username in g.rooms[c.room].players) {
-		var iteratedClient = m.centFromUsername(g, c, username);
+		var iteratedClient = m.clientFromUsername(g, c, username);
 		if(m.dist(iteratedClient.xPos,iteratedClient.yPos,wallX,wallY)<5) {
 			return true;
 		}

@@ -24,8 +24,8 @@ function pageChng(rooms, diff) {
 	var shownRooms = rooms.slice(start,end);
 
 	$('#roomList').empty();
-	$('#roomList').append("<div style='font-size: 5.5vh; font-family: Bit; text-align: center; color: #4C767B'>&nbsp;Rooms<span class='prev' oncck='pageChng("+JSON.stringify(rooms)+", -1)'>←</span><span class='mext' oncck='pageChng("+JSON.stringify(rooms)+", 1)'>→</span></div>");
+	$('#roomList').append("<div style='font-size: 5.5vh; font-family: Bit; text-align: center; color: #4C767B'>&nbsp;Rooms<span class='prev' onclick='pageChng("+JSON.stringify(rooms)+", -1)'>←</span><span class='mext' onclick='pageChng("+JSON.stringify(rooms)+", 1)'>→</span></div>");
 	for(var room=0;room<shownRooms.length;room++) {
-		$('#roomList').append('<div style="font-size: 1.8vh; background-color: #4C767B; color: #334F52; font-size: 2vh; font-weight: 900; padding: 0.8vh; margin: 0.8vh;" oncck="s.emit(\'switchRoom\',\''+shownRooms[room].roomName+'\');">' + shownRooms[room].roomName + '<span style="float: right;">'+shownRooms[room].playerCount+'/'+shownRooms[room].maxPlayers+'</span></div>');
+		$('#roomList').append('<div style="font-size: 1.8vh; background-color: #4C767B; color: #334F52; font-size: 2vh; font-weight: 900; padding: 0.8vh; margin: 0.8vh;" onclick="s.emit(\'switchRoom\',\''+shownRooms[room].roomName+'\');">' + shownRooms[room].roomName + '<span style="float: right;">'+shownRooms[room].playerCount+'/'+shownRooms[room].maxPlayers+'</span></div>');
 	}
 }

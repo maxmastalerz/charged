@@ -43,7 +43,7 @@ module.exports = {
 		for (var id in ns.connected) {
 			var index = ns.connected[id].rooms.indexOf(c.room);
 			if(index !== -1) {
-				centsInRoom.push(ns.connected[id]);
+				clientsInRoom.push(ns.connected[id]);
 			}
 		}
 
@@ -64,7 +64,7 @@ module.exports = {
 	},
 	roomAvailable: function(g, c) {
 		for(var iteratedRoom in g.rooms) {
-			if(room===iteratedRoom) {
+			if(g.room===iteratedRoom) {
 				return false;
 			}
 		}
