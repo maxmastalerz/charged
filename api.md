@@ -65,11 +65,11 @@ g.rooms[roomName] = {
 | `c.emit('leftRoom')`                                                                                | Tell the client they've left the room                        |
 | `c.emit('updateRooms',[{roomName: 'blah',playerCount: 3,maxPlayers: 6},{},{}])`                     | Update the client with the rooms list                        |
 | `c.emit('updateChat', displayName, colour, message)`                                                | Send a chat message to the client                            |
-| `c.emit('updateLives', lifeCount)                                                                   | Update the client with their life count                      |
+| `c.emit('updateLives', lifeCount)`                                                                  | Update the client with their life count                      |
 | `c.emit('updateBombs', bombCount)`                                                                  | Update the client with their bomb count                      |
 | `c.emit('updateWallsInUse', wallsInUse`)                                                            | Update the client with the amount of walls they have in use  |
-| `c.emit('roomProtected', roomName)                                                                  | Tell the client the room they are joining requires a pass    |
-| `c.emit('updateColour', colour)                                                                     | Update the client with their new colour                      |
+| `c.emit('roomProtected', roomName)`                                                                 | Tell the client the room they are joining requires a pass    |
+| `c.emit('updateColour', colour)`                                                                    | Update the client with their new colour                      |
 | `c.on('eventName')`                                                                                 | Server listening in on a client emition and readt to act     |
 
 ## m: The methods object    require('./methods.js');
