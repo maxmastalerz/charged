@@ -8,6 +8,7 @@ Charged is a multiplayer browser game constructed using NodeJS, SocketIO, Expres
 
 ```
 $ git clone https://github.com/meaniostack/charged.git
+$ cd charged
 $ npm install
 ```
 
