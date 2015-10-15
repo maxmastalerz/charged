@@ -1,4 +1,4 @@
-Most code intereactions that you do will fall under one of these 5 objects:
+# The 5 most important objects
 
 ## i : The includes object (Only present in Server.js)
 
@@ -16,12 +16,14 @@ wallPlacement: 	require('./wallPlacement.js')
 
 ## g : The game object
 
-`g.io.of("/")`														SocketIO's default namespace
+| Code                                                        | Explanation                           |
+| ----------------------------------------------------------- | ------------------------------------- |
+| `g.io.of("/")`                                              | SocketIO's default namespace          |
+| `g.io.sockets.emit('eventName', optionalParameters);`       | Sends every client an event           |
+| `g.rooms`                                                   | An array of rooms on the server       |
 
-`g.io.sockets.emit('eventName', optionalParameters);`				Sends every client an event;
-
-`g.rooms[roomName] = {`												A specific room from the rooms array and it's properties shown:
-```
+A specific room from the rooms array and it's properties shown:
+```g.rooms[roomName] = {
 	players: {
 		username1: clientsId,
 		username2: clientsId
@@ -39,9 +41,9 @@ wallPlacement: 	require('./wallPlacement.js')
 
 ## s : The server object.
 
-`s.emit('move', deltaX, deltaY)`															//Moves player depending on deltaX, or deltaY values.
+`s.emit('move', deltaX, deltaY)`														Tell the server what direction we wish to move to
 
-`s.emit('checkRoomPassword', room, prompt('Input the password: '))`						//Asks server to check if the room password input was correct
+`s.emit('checkRoomPassword', room, prompt('Input the password: '))`						Asks server to check if the room password input was correct
 
 `s.emit('placeBomb')`																		//Places wall at the client's location
 
