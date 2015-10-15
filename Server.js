@@ -25,8 +25,8 @@ var g = {			//Global game data
 
 g.io.sockets.on('connection', function(c) {
 	c.room = null;
-	c.username = i.m.generateUsername(g, c);
-	i.m.updateRoomLists(g);
+	c.username = m.generateUsername(g, c);
+	m.updateRoomLists(g);
 
 	c.on('placeBomb', function() {
 		i.bombPlacement(g, c);
@@ -38,10 +38,10 @@ g.io.sockets.on('connection', function(c) {
 		i.create(g, c, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword);
 	});
 	c.on('clearDebris', function() {
-		i.m.updateMiniMapsInYourRoom(g, c);
+		m.updateMiniMapsInYourRoom(g, c);
 	});
 	c.on('changeName', function(newName) {
-		i.m.changeName(g, c, newName);
+		m.changeName(g, c, newName);
 	});
 	c.on('switchRoom', function(newRoom) {
 		i.join(g, c, newRoom);
@@ -68,7 +68,7 @@ g.io.sockets.on('connection', function(c) {
 		i.move(g, c, deltaX, deltaY);
 	});
 	c.on('sendchat', function(message) {
-		message = i.m.sanitizeInput(message.replace(/\s+/g,' ')).trim();
+		message = m.sanitizeInput(message.replace(/\s+/g,' ')).trim();
 		if(message!==null && message!=='' && !(/^\s+$/.test(message))) {
 			g.io.sockets.in(c.room).emit('updateChat', c.username, c.colour, message);
 		}
