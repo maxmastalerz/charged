@@ -40,11 +40,11 @@ module.exports = {
 			}
 		}
 	},
-	clientFromUsername: function(ns, username, client) {
-		var clientsInRoom = [client];
+	clientFromUsername: function(ns, username, cli) {
+		var clientsInRoom = [cli];
 
 		for (var id in ns.connected) {
-			var index = ns.connected[id].rooms.indexOf(client.room);
+			var index = ns.connected[id].rooms.indexOf(cli.room);
 			if(index !== -1) {
 				clientsInRoom.push(ns.connected[id]);
 			}
@@ -72,30 +72,30 @@ module.exports = {
 		}
 		return true;
 	},
-	updateMiniMapsInYourRoom: function(ns, rooms, client) {
-		for(var username in rooms[client.room].players) {
-			var iteratedClient = module.exports.clientFromUsername(ns, username, client);
+	updateMiniMapsInYourRoom: function(ns, rooms, cli) {
+		for(var username in rooms[cli.room].players) {
+			var iteratedClient = module.exports.clientFromUsername(ns, username, cli);
 
 			var x1, y1, x2, y2;
 
-			if(iteratedClient.yPos<((rooms[client.room].mapVisibility/2)-0.5)) {
+			if(iteratedClient.yPos<((rooms[cli.room].mapVisibility/2)-0.5)) {
 				y1 = 0;
-			} else if(iteratedClient.yPos>(rooms[client.room].mapSize-(((rooms[client.room].mapVisibility/2)-0.5)))-1) {
-				y1 = rooms[client.room].mapSize-rooms[client.room].mapVisibility;
+			} else if(iteratedClient.yPos>(rooms[cli.room].mapSize-(((rooms[cli.room].mapVisibility/2)-0.5)))-1) {
+				y1 = rooms[cli.room].mapSize-rooms[cli.room].mapVisibility;
 			} else {
-				y1 = iteratedClient.yPos-((rooms[client.room].mapVisibility/2)-0.5);
+				y1 = iteratedClient.yPos-((rooms[cli.room].mapVisibility/2)-0.5);
 			}
 
-			if(iteratedClient.xPos<((rooms[client.room].mapVisibility/2)-0.5)) {
+			if(iteratedClient.xPos<((rooms[cli.room].mapVisibility/2)-0.5)) {
 				x1 = 0;
-			} else if(iteratedClient.xPos>(rooms[client.room].mapSize-(((rooms[client.room].mapVisibility/2)-0.5)))-1) {
-				x1 = rooms[client.room].mapSize-rooms[client.room].mapVisibility;
+			} else if(iteratedClient.xPos>(rooms[cli.room].mapSize-(((rooms[cli.room].mapVisibility/2)-0.5)))-1) {
+				x1 = rooms[cli.room].mapSize-rooms[cli.room].mapVisibility;
 			} else {
-				x1 = iteratedClient.xPos-((rooms[client.room].mapVisibility/2)-0.5);
+				x1 = iteratedClient.xPos-((rooms[cli.room].mapVisibility/2)-0.5);
 			}
 
-			y2 = y1+rooms[client.room].mapVisibility;
-			x2 = x1+rooms[client.room].mapVisibility;
+			y2 = y1+rooms[cli.room].mapVisibility;
+			x2 = x1+rooms[cli.room].mapVisibility;
 
 			iteratedClient.miniMap = getSlice(rooms[iteratedClient.room].map, [y1,x1],[y2,x2]);
 			iteratedClient.emit('updateMap', iteratedClient.miniMap);
@@ -103,19 +103,19 @@ module.exports = {
 			iteratedClient.offsetY = y1;
 		}
 	},
-	spawn: function(ns, rooms, client) {
-		if(rooms[client.room].gameMode==='ffa') { client.colour = getRandColour(); }
-		client.emit('updateColour', client.colour);
-		client.xPos = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
-		client.yPos = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
+	spawn: function(ns, rooms, cli) {
+		if(rooms[cli.room].gameMode==='ffa') { cli.colour = getRandColour(); }
+		cli.emit('updateColour', cli.colour);
+		cli.xPos = Math.floor((Math.random() * (rooms[cli.room].mapSize-3)) + 2);
+		cli.yPos = Math.floor((Math.random() * (rooms[cli.room].mapSize-3)) + 2);
 
 		//Sort of smart spawning makes sure you don't end up ontop of an emeny/bomb/blocked in.
-		if(rooms[client.room].map[client.yPos][client.xPos].type==='air' && rooms[client.room].map[client.yPos+1][client.xPos].type==='air' && rooms[client.room].map[client.yPos+1][client.xPos+1].type==='air') {
-			client.entityUnderneath = null;
-			rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: client.username, colour: client.colour, entityUnderneath: null };
-			module.exports.updateMiniMapsInYourRoom(ns, rooms, client);
+		if(rooms[cli.room].map[cli.yPos][cli.xPos].type==='air' && rooms[cli.room].map[cli.yPos+1][cli.xPos].type==='air' && rooms[cli.room].map[cli.yPos+1][cli.xPos+1].type==='air') {
+			cli.entityUnderneath = null;
+			rooms[cli.room].map[cli.yPos][cli.xPos] = { type: 'player', id: cli.id, username: cli.username, colour: cli.colour, entityUnderneath: null };
+			module.exports.updateMiniMapsInYourRoom(ns, rooms, cli);
 		} else {
-			module.exports.spawn(ns,rooms, client);	//Might recurse forever if no spawn point is found. Lol
+			module.exports.spawn(ns,rooms, cli);	//Might recurse forever if no spawn point is found. Lol
 		}
 	},
 	updatePlayersListIn: function(io, rooms, room) {
@@ -125,7 +125,7 @@ module.exports = {
 		}
 		io.sockets.in(room).emit('updatePlayersList', playersInRoom);
 	},
-	generateUsername: function(io, client) {
+	generateUsername: function(io, cli) {
 		var generated;
 		while(true) {
 			generated = sillyName();
@@ -134,23 +134,23 @@ module.exports = {
 			}
 		}
 	},
-	changeName: function(io, client, rooms, newName) {
+	changeName: function(io, cli, rooms, newName) {
 		newName = sanitizeHtml(newName);		//Must sanitize before & after checking emptiness of newName
 		if(newName!=='null' && newName!=='undefined' && newName!=='' && !(/^\s+$/.test(newName))) {
 			newName = sanitizeHtml(newName.replace(/\s+/g,' ')).trim();
 			if(module.exports.usernameAvailable(io.of("/"), newName) && newName.length<=20) {
-				var oldName = client.username;
-				client.username = newName;
-				client.emit('updateChat', 'SERVER', '#00FFFF', 'Username was changed to: '+newName);
-				if(client.room!==null) {
-					delete rooms[client.room].players[oldName];
-					rooms[client.room].players[newName] = client.id;
-					rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: newName, colour: client.colour };
-					module.exports.updatePlayersListIn(io, rooms, client.room);
-					module.exports.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+				var oldName = cli.username;
+				cli.username = newName;
+				cli.emit('updateChat', 'SERVER', '#00FFFF', 'Username was changed to: '+newName);
+				if(cli.room!==null) {
+					delete rooms[cli.room].players[oldName];
+					rooms[cli.room].players[newName] = cli.id;
+					rooms[cli.room].map[cli.yPos][cli.xPos] = { type: 'player', id: cli.id, username: newName, colour: cli.colour };
+					module.exports.updatePlayersListIn(io, rooms, cli.room);
+					module.exports.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
 				}
 			} else {
-				client.emit('usernameCreateError', 'Username restrictions: \n   1. Username must be unique \n   2. Username must not surpass 20 chars \nPlease try again: ');
+				cli.emit('usernameCreateError', 'Username restrictions: \n   1. Username must be unique \n   2. Username must not surpass 20 chars \nPlease try again: ');
 			}
 		}
 	},

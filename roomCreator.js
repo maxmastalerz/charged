@@ -1,7 +1,7 @@
 var meth = require('./meth.js');
 var join = require('./join.js');
 
-function noCreationErrors(client, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay) {
+function noCreationErrors(cli, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay) {
 	var sentMessage = '';
 	if(room==='null' || room==='[object Object]' || room==='undefined' || room==='' || (/^\s+$/.test(room))) {
 		sentMessage+='Room name must not be blank\n';
@@ -24,7 +24,7 @@ function noCreationErrors(client, rooms, room, maxPlayers, gameMode, mapSize, ma
 	if(sentMessage==='') {
 		return true;
 	} else {
-		client.emit('errorMessage', 'Issues that occured when creating room: \n'+sentMessage);
+		cli.emit('errorMessage', 'Issues that occured when creating room: \n'+sentMessage);
 	}
 }
 
@@ -82,7 +82,7 @@ function generateMap(rooms, room) {
 	}
 }
 
-module.exports = function(io, client, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) {
+module.exports = function(io, cli, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) {
 	room = meth.sanitizeInput(room);
 	if(roomPassword!==undefined) { roomPassword = meth.sanitizeInput(roomPassword); }
 	roomPassword = roomPassword || null;
@@ -93,7 +93,7 @@ module.exports = function(io, client, rooms, room, maxPlayers, gameMode, mapSize
 	if(mapVisibility>mapSize) {	mapVisibility = mapSize; }
 	bombDelay = parseInt(bombDelay) || 1500;
 
-	if(noCreationErrors(client, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay)) {
+	if(noCreationErrors(cli, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay)) {
 		rooms[room] = {
 			players: {},
 			playerCount: 0,
@@ -107,6 +107,6 @@ module.exports = function(io, client, rooms, room, maxPlayers, gameMode, mapSize
 		};
 
 		generateMap(rooms, room);
-		join(io, client, rooms, room);
+		join(io, cli, rooms, room);
 	}
 };

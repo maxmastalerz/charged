@@ -1,79 +1,79 @@
 var meth = require('./meth.js');
 
-function spawnPickup(client, rooms) {
+function spawnPickup(cli, rooms) {
 	var x, y;
 	while(true) {
-		x = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
-		y = Math.floor((Math.random() * (rooms[client.room].mapSize-3)) + 2);
-		if(rooms[client.room].map[y][x].type==='air') {
+		x = Math.floor((Math.random() * (rooms[cli.room].mapSize-3)) + 2);
+		y = Math.floor((Math.random() * (rooms[cli.room].mapSize-3)) + 2);
+		if(rooms[cli.room].map[y][x].type==='air') {
 			break;
 		}
 	}
-	rooms[client.room].map[y][x] = {type: 'crate'};
+	rooms[cli.room].map[y][x] = {type: 'crate'};
 }
 
-function playersNearbySpawn(io, client, rooms, bombY, bombX) {
-	for(var username in rooms[client.room].players) {
-		var iteratedClient = meth.clientFromUsername(io.of("/"), username, client);
+function playersNearbySpawn(io, cli, rooms, bombY, bombX) {
+	for(var username in rooms[cli.room].players) {
+		var iteratedClient = meth.clientFromUsername(io.of("/"), username, cli);
 		if(meth.dist(iteratedClient.xPos,iteratedClient.yPos,bombX,bombY)<5) {
 			return true;
 		}
 	}
 }
 
-function scheduleRespawn(io, client, rooms, bombY, bombX) {
+function scheduleRespawn(io, cli, rooms, bombY, bombX) {
 	setTimeout(function() {
-		if(client.room!==null) {
-			if(playersNearbySpawn(io, client, rooms, bombY, bombX) || rooms[client.room].map[bombY][bombX].type==="wall") {
-				scheduleRespawn(io, client, rooms, bombY,bombX);
-			} else if(rooms[client.room].map[bombY][bombX].type==='air') {
-				rooms[client.room].map[bombY][bombX].type = 'block';
-				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+		if(cli.room!==null) {
+			if(playersNearbySpawn(io, cli, rooms, bombY, bombX) || rooms[cli.room].map[bombY][bombX].type==="wall") {
+				scheduleRespawn(io, cli, rooms, bombY,bombX);
+			} else if(rooms[cli.room].map[bombY][bombX].type==='air') {
+				rooms[cli.room].map[bombY][bombX].type = 'block';
+				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
 			}
 		}
 	}, 15000);	//delay between trying to respawn the block that was blown up
 }
 
-function canPlaceBomb(client) {
-	if(client.room!==null && client.entityUnderneath===null && client.bombs>0) {
+function canPlaceBomb(cli) {
+	if(cli.room!==null && cli.entityUnderneath===null && cli.bombs>0) {
 		return true;
 	}
 }
 
-function destroyBlocks(io, client, rooms, bombY, bombX) {
-	rooms[client.room].map[bombY][bombX].type = 'air';
+function destroyBlocks(io, cli, rooms, bombY, bombX) {
+	rooms[cli.room].map[bombY][bombX].type = 'air';
 	for(var i=-2;i<=2;i++) {
-		if((bombY+i)===rooms[client.room].mapSize || (bombY+i)===rooms[client.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || rooms[client.room].map[bombY+i][bombX].type==='crate' || rooms[client.room].map[bombY+i][bombX].type==='bomb' || rooms[client.room].map[bombY+i][bombX].type==='indestructible') {
+		if((bombY+i)===rooms[cli.room].mapSize || (bombY+i)===rooms[cli.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || rooms[cli.room].map[bombY+i][bombX].type==='crate' || rooms[cli.room].map[bombY+i][bombX].type==='bomb' || rooms[cli.room].map[bombY+i][bombX].type==='indestructible') {
 			continue;
 		} else {
-			if(rooms[client.room].map[bombY+i][bombX].type!=='air') {
-				if(rooms[client.room].map[bombY+i][bombX].type!=='bomb' && rooms[client.room].map[bombY+i][bombX].type!=='player') {
-					scheduleRespawn(io, client, rooms, bombY+i,bombX);
+			if(rooms[cli.room].map[bombY+i][bombX].type!=='air') {
+				if(rooms[cli.room].map[bombY+i][bombX].type!=='bomb' && rooms[cli.room].map[bombY+i][bombX].type!=='player') {
+					scheduleRespawn(io, cli, rooms, bombY+i,bombX);
 				}
-				rooms[client.room].map[bombY+i][bombX].type = 'air';
+				rooms[cli.room].map[bombY+i][bombX].type = 'air';
 			}
 		}
 	}
 	for(var ii=-2;ii<=2;ii++) {
-		if((bombX+ii)===rooms[client.room].mapSize || (bombX+ii)===rooms[client.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || rooms[client.room].map[bombY][bombX+ii].type==='crate' || rooms[client.room].map[bombY][bombX+ii].type==='bomb' || rooms[client.room].map[bombY][bombX+ii].type==='indestructible') {
+		if((bombX+ii)===rooms[cli.room].mapSize || (bombX+ii)===rooms[cli.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || rooms[cli.room].map[bombY][bombX+ii].type==='crate' || rooms[cli.room].map[bombY][bombX+ii].type==='bomb' || rooms[cli.room].map[bombY][bombX+ii].type==='indestructible') {
 			continue;
 		} else {
-			if(rooms[client.room].map[bombY][bombX+ii].type!=='air') {
-				if(rooms[client.room].map[bombY][bombX+ii].type!=='bomb' && rooms[client.room].map[bombY][bombX+ii].type!=='player') {
-					scheduleRespawn(io, client, rooms, bombY,bombX+ii);
+			if(rooms[cli.room].map[bombY][bombX+ii].type!=='air') {
+				if(rooms[cli.room].map[bombY][bombX+ii].type!=='bomb' && rooms[cli.room].map[bombY][bombX+ii].type!=='player') {
+					scheduleRespawn(io, cli, rooms, bombY,bombX+ii);
 				}
-				rooms[client.room].map[bombY][bombX+ii] = {type: 'air'};
+				rooms[cli.room].map[bombY][bombX+ii] = {type: 'air'};
 			}
 		}
 	}
-	spawnPickup(client, rooms);
-	meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+	spawnPickup(cli, rooms);
+	meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
 }
 
-function checkForDeath(io, client, rooms) {
-	for(var username in rooms[client.room].players) {
-		var iteratedClient = meth.clientFromUsername(io.of("/"), username, client);
-		if(rooms[client.room].map[iteratedClient.yPos][iteratedClient.xPos].type=='air') {
+function checkForDeath(io, cli, rooms) {
+	for(var username in rooms[cli.room].players) {
+		var iteratedClient = meth.clientFromUsername(io.of("/"), username, cli);
+		if(rooms[cli.room].map[iteratedClient.yPos][iteratedClient.xPos].type=='air') {
 			iteratedClient.lives--;
 			iteratedClient.emit('updateLives', iteratedClient.lives);
 			if(iteratedClient.lives===0) {
@@ -84,27 +84,27 @@ function checkForDeath(io, client, rooms) {
 	}
 }
 
-function broadcastExplosion(io, client, rooms, bombY, bombX) {
-	for(var username in rooms[client.room].players) {
-		var iteratedClient = meth.clientFromUsername(io.of("/"), username, client);
+function broadcastExplosion(io, cli, rooms, bombY, bombX) {
+	for(var username in rooms[cli.room].players) {
+		var iteratedClient = meth.clientFromUsername(io.of("/"), username, cli);
 		iteratedClient.emit('explosionVisual', iteratedClient.miniMap, bombY-iteratedClient.offsetY, bombX-iteratedClient.offsetX);
 	}
 }
 
-module.exports = function(io, client, rooms) {
-	if(canPlaceBomb(client)) {
-		var bombY = client.yPos;
-		var bombX = client.xPos;
-		client.entityUnderneath = 'bomb';
-		client.bombs--;
-		client.emit('updateBombs', client.bombs);
-		rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: client.username, colour: client.colour, entityUnderneath: client.entityUnderneath };
-		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+module.exports = function(io, cli, rooms) {
+	if(canPlaceBomb(cli)) {
+		var bombY = cli.yPos;
+		var bombX = cli.xPos;
+		cli.entityUnderneath = 'bomb';
+		cli.bombs--;
+		cli.emit('updateBombs', cli.bombs);
+		rooms[cli.room].map[cli.yPos][cli.xPos] = { type: 'player', id: cli.id, username: cli.username, colour: cli.colour, entityUnderneath: cli.entityUnderneath };
+		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
 
 		setTimeout(function() {
-			destroyBlocks(io, client, rooms, bombY, bombX);
-			broadcastExplosion(io, client, rooms, bombY, bombX);
-			checkForDeath(io, client, rooms);
-		}, rooms[client.room].bombDelay);
+			destroyBlocks(io, cli, rooms, bombY, bombX);
+			broadcastExplosion(io, cli, rooms, bombY, bombX);
+			checkForDeath(io, cli, rooms);
+		}, rooms[cli.room].bombDelay);
 	}
 };

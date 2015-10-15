@@ -1,34 +1,34 @@
 var meth = require('./meth.js');
 
-function removeFromPlayerList(io, client, rooms) {
-	for(var player in rooms[client.room].players) {
-		if(player==client.username) {
-			delete rooms[client.room].players[player];
-			meth.updatePlayersListIn(io, rooms, client.room);
+function removeFromPlayerList(io, cli, rooms) {
+	for(var player in rooms[cli.room].players) {
+		if(player==cli.username) {
+			delete rooms[cli.room].players[player];
+			meth.updatePlayersListIn(io, rooms, cli.room);
 		}
 	}
 }
 
-function deleteRoomIfEmpty(client, rooms) {
-	rooms[client.room].playerCount = Object.keys(rooms[client.room].players).length;
-	if(rooms[client.room].playerCount===0) {
-		delete rooms[client.room];
+function deleteRoomIfEmpty(cli, rooms) {
+	rooms[cli.room].playerCount = Object.keys(rooms[cli.room].players).length;
+	if(rooms[cli.room].playerCount===0) {
+		delete rooms[cli.room];
 	}
 }
 
-module.exports = function(io, client, rooms) {
-	if(client.room!==null) {
-		rooms[client.room].map[client.yPos][client.xPos] = {type: 'air'};
-		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+module.exports = function(io, cli, rooms) {
+	if(cli.room!==null) {
+		rooms[cli.room].map[cli.yPos][cli.xPos] = {type: 'air'};
+		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
 
-		removeFromPlayerList(io, client, rooms);
+		removeFromPlayerList(io, cli, rooms);
 
-		client.leave(client.room);
-		client.emit('leftRoom');
-		client.broadcast.to(client.room).emit('updateChat', 'SERVER', '#00FFFF', client.username+' chose to leave');
+		cli.leave(cli.room);
+		cli.emit('leftRoom');
+		cli.broadcast.to(cli.room).emit('updateChat', 'SERVER', '#00FFFF', cli.username+' chose to leave');
 
-		deleteRoomIfEmpty(client, rooms);
-		client.room = null;
+		deleteRoomIfEmpty(cli, rooms);
+		cli.room = null;
 		meth.updateRoomLists(io.of("/"), rooms);
 	}
 };

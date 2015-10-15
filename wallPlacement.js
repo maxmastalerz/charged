@@ -1,45 +1,45 @@
 var meth = require('./meth.js');
 
-function playersNearbySpawn(io, client, rooms, wallY, wallX) {
-	for(var username in rooms[client.room].players) {
-		var iteratedClient = meth.clientFromUsername(io.of("/"), username, client);
+function playersNearbySpawn(io, cli, rooms, wallY, wallX) {
+	for(var username in rooms[cli.room].players) {
+		var iteratedClient = meth.clientFromUsername(io.of("/"), username, cli);
 		if(meth.dist(iteratedClient.xPos,iteratedClient.yPos,wallX,wallY)<5) {
 			return true;
 		}
 	}
 }
 
-function scheduleDespawn(io, client, rooms, wallY, wallX) {
+function scheduleDespawn(io, cli, rooms, wallY, wallX) {
 	setTimeout(function() {
-		if(client.room!==null) {
-			if(playersNearbySpawn(io, client, rooms, wallY, wallX)) {
-				scheduleDespawn(io, client, rooms, wallY,wallX);
-			} else if(rooms[client.room].map[wallY][wallX].type==='wall') {
-				rooms[client.room].map[wallY][wallX] = {type: 'air'};
-				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
-				client.wallsInUse--;
-				client.emit('updateWallsInUse', client.wallsInUse);
-				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+		if(cli.room!==null) {
+			if(playersNearbySpawn(io, cli, rooms, wallY, wallX)) {
+				scheduleDespawn(io, cli, rooms, wallY,wallX);
+			} else if(rooms[cli.room].map[wallY][wallX].type==='wall') {
+				rooms[cli.room].map[wallY][wallX] = {type: 'air'};
+				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
+				cli.wallsInUse--;
+				cli.emit('updateWallsInUse', cli.wallsInUse);
+				meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
 			}
 		}
 	}, 7000);	//delay between trying to despawn the wall placed
 }
 
-function canPlaceWall(client) {
-	if(client.room!==null && client.entityUnderneath===null && client.wallsInUse<3) {
+function canPlaceWall(cli) {
+	if(cli.room!==null && cli.entityUnderneath===null && cli.wallsInUse<3) {
 		return true;
 	}
 }
 
-module.exports = function(io, client, rooms) {
-	if(canPlaceWall(client)) {
-		var wallY = client.yPos;
-		var wallX = client.xPos;
-		client.entityUnderneath = 'wall';
-		scheduleDespawn(io, client, rooms, wallY, wallX);
-		client.wallsInUse++;
-		client.emit('updateWallsInUse', client.wallsInUse);
-		rooms[client.room].map[client.yPos][client.xPos] = { type: 'player', id: client.id, username: client.username, colour: client.colour, entityUnderneath: client.entityUnderneath };
-		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, client);
+module.exports = function(io, cli, rooms) {
+	if(canPlaceWall(cli)) {
+		var wallY = cli.yPos;
+		var wallX = cli.xPos;
+		cli.entityUnderneath = 'wall';
+		scheduleDespawn(io, cli, rooms, wallY, wallX);
+		cli.wallsInUse++;
+		cli.emit('updateWallsInUse', cli.wallsInUse);
+		rooms[cli.room].map[cli.yPos][cli.xPos] = { type: 'player', id: cli.id, username: cli.username, colour: cli.colour, entityUnderneath: cli.entityUnderneath };
+		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
 	}
 };
