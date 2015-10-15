@@ -46,39 +46,43 @@ g.rooms[roomName] = {
 | Code                                                                                                | Explanation                                                  |
 | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | `s.emit('move', deltaX, deltaY)`                                                                    | Tell server what direction we wish to move                   |
-| `s.emit('checkRoomPassword', room, prompt('Input the password: '))`                                 | Tell server to check if the room password input was correct  |
+| `s.emit('checkRoomPassword', room, prompt('Input password: '))`                                     | Tell server to check if the room password input was correct  |
 | `s.emit('placeBomb')`                                                                               | Tell server that we want to place a bomb                     |
-| `s.emit('placeWall')`                                                                               | Tell sserver that we want to place a wall                    |
+| `s.emit('placeWall')`                                                                               | Tell server that we want to place a wall                     |
 | `s.emit('sendchat', message)`                                                                       | Tell server our desired chat message                         |
 | `s.emit('changeName', prompt('Choose a custom name'))`                                              | Tell server our newly desired username                       |
 | `s.emit('createRoom', name, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword)` | Tell server we wish to create a room with passed in settings |
 | `s.emit('returnToMenu')`                                                                            | Tell server we wish to leave the room and return to the menu |
-| `s.on('eventName', callback)`                                                                       | Server acts on the notification. Example: Moves the player   |
+| `s.on('eventName', callback)`                                                                       | Client listening in on a server emition and ready to act     |
 
 ## c : The client object.
 
-c.emit('errorMessage', message)															//Alerts an error to the client.
-c.emit('updateBombs', bombCount)														//Updates bomb display
-c.emit('joinedRoom')																	//Tell everyone in the lobby someone joined
-c.emit('leftRoom')																		//Tell everyone in the lobby someone left
-c.emit('updateRooms',[{roomName: 'blah',playerCount: 3,maxPlayers: 6},{},{}])			//Update one client with rooms. g.io.sockets.emit('updateRooms', rooms) will update everyone
-c.emit('updateChat', displayName, colour, message)										//Sends a chat message to the client.
-c.emit('updateLives', lifeCount)														//Updates life display
-c.emit('updateBombs', bombCount)														//Updates bomb count
-c.emit('updateWallsInUse', wallsInUse)													//Informs the client of how many walls he currently has placed down(NOT HOW MANY HE HAS LEFT).
-c.emit('roomProtected', roomName)														//Prompts the client for a password to join the room.
-c.emit('updateColour', colour)															//Changes the players colour
+| Code                                                                                                | Explanation                                                  |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `c.emit('errorMessage', message)`                                                                   | Alert an error message to the client                         |
+| `c.emit('updateBombs', bombCount)`                                                                  | Update the client's bomb count display                       |
+| `c.emit('joinedRoom')`                                                                              | Tell the client they've joined the room                      |
+| `c.emit('leftRoom')`                                                                                | Tell the client they've left the room                        |
+| `c.emit('updateRooms',[{roomName: 'blah',playerCount: 3,maxPlayers: 6},{},{}])`                     | Update the client with the rooms list                        |
+| `c.emit('updateChat', displayName, colour, message)`                                                | Send a chat message to the client                            |
+| `c.emit('updateLives', lifeCount)                                                                   | Update the client with their life count                      |
+| `c.emit('updateBombs', bombCount)`                                                                  | Update the client with their bomb count                      |
+| `c.emit('updateWallsInUse', wallsInUse`)                                                            | Update the client with the amount of walls they have in use  |
+| `c.emit('roomProtected', roomName)                                                                  | Tell the client the room they are joining requires a pass    |
+| `c.emit('updateColour', colour)                                                                     | Update the client with their new colour                      |
+| `c.on('eventName')`                                                                                 | Server listening in on a client emition and readt to act     |
 
 ## m: The methods object    require('./methods.js');
 
-m.Create2DArray(rows)																	//Used in creating a 2d array to represent the game board
-m.dist(x1,y1,x2,y2)																		//Calculate the block distance between two grid points (x1,y1) and (x2,y2)
-m.updateRoomLists(g)																	//Updates the list of rooms
-m.clientFromUsername(g, c, username)													//Returns the client object after a username query
-m.roomAvailable(g, roomName)															//Checks if room name is available
-m.updateMiniMapsInYourRoom(g, c)														//Sends map data to every client. The data is a slice(around player) of the full room map
-m.spawn(g, c)																			//Respawns the player randomly
-m.updatePlayersListIn(g, c)																//Updates the list of players in the client's lobby
-m.generateUsername(g, c)																//Generates a random username using 'silly-name' module
-m.changeName(g, c, newName)																//Changes the player's name if valid
-m.sanitizeInput(input)																	//Returns sanitized input. Must use on all client data
+| Code                                                                                                | Explanation                                                  |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `m.Create2DArray(rows)`                                                                             | Used in creating a 2d array game board with the size of rows |
+| `m.dist(x1,y1,x2,y2)`                                                                               | Calculates distance between (x1,y1) and (x2,y2)              |
+| `m.updateRoomLists(g)`                                                                              | Sends every client and updated room list                     |
+| `m.clientFromUsername(g, c, username)`                                                              | Returns a client object from a user with a specific username |
+| `m.roomAvailable(g, roomName)`                                                                      | Checks if a room name is available                           |
+| `m.updateMiniMapsInYourRoom(g, c)`                                                                  | Updates every client's game map view                         |
+| `m.spawn(g, c)`                                                                                     | Randomly spawns the client in the room                       |
+| `m.generateUsername(g, c)`                                                                          | Randomly generates the client's username                     |
+| `m.changeName(g, c , newName)`                                                                      | Changes the client's name                                    |
+| `m.sanitizeInput(input)`                                                                            | Returns sanitized input. Must use on all client data         |
