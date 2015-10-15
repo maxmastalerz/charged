@@ -21,6 +21,7 @@ wallPlacement: 	require('./wallPlacement.js')
 `g.io.sockets.emit('eventName', optionalParameters);`				Sends every client an event;
 
 `g.rooms[roomName] = {`												A specific room from the rooms array and it's properties shown:
+```
 	players: {
 		username1: clientsId,
 		username2: clientsId
