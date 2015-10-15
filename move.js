@@ -1,68 +1,68 @@
-var meth = require('./meth.js');
+var m = require('./methods.js');
 
-function hackedMovement(cli, deltaX, deltaY) {
-	if(cli.room!==null && deltaX>-2 && deltaX<2 && deltaY>-2 && deltaY<2) {
+function hackedMovement(c, deltaX, deltaY) {
+	if(c.room!==null && deltaX>-2 && deltaX<2 && deltaY>-2 && deltaY<2) {
 		return false;
 	}
 }
-function validDestination(cli, rooms, deltaX, deltaY) {
-	if(rooms[cli.room].map[cli.yPos+deltaY][cli.xPos+deltaX].type==='air' || rooms[cli.room].map[cli.yPos+deltaY][cli.xPos+deltaX].type==='crate') {
+function validDestination(g, c, deltaX, deltaY) {
+	if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='air' || g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='crate') {
 		return true;
 	}
-	if(rooms[cli.room].map[cli.yPos+deltaY][cli.xPos+deltaX].type==='wall') {
-		if(rooms[cli.room].map[cli.yPos+deltaY][cli.xPos+deltaX].owner===cli.username && rooms[cli.room].gameMode==='ffa') {
+	if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='wall') {
+		if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].owner===c.username && g.rooms[c.room].gameMode==='ffa') {
 			return true;
 		}
-		if(rooms[cli.room].map[cli.yPos+deltaY][cli.xPos+deltaX].owner===cli.team && rooms[cli.room].gameMode==='ctf') {
+		if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].owner===c.team && g.rooms[c.room].gameMode==='ctf') {
 			return true;
 		}
 	}
 }
-function pickedUpBomb(cli, rooms, deltaX, deltaY) {
-	if(rooms[cli.room].map[cli.yPos+deltaY][cli.xPos+deltaX].type==='crate') {
+function pickedUpBomb(g, c, deltaX, deltaY) {
+	if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='crate') {
 		return true;
 	}
 }
-function decideBlockTrail(cli, rooms) {	//Determines whether to leave a empty block or a bomb at the player's previous position.
-	if(cli.entityUnderneath===null) {
-		rooms[cli.room].map[cli.yPos][cli.xPos] = {type: 'air'};
-	} else if(cli.entityUnderneath==='bomb') {
-		rooms[cli.room].map[cli.yPos][cli.xPos] = {type: 'bomb'};
-	} else if(cli.entityUnderneath==='wall') {
-		if(rooms[cli.room].gameMode==='ctf') {
-			rooms[cli.room].map[cli.yPos][cli.xPos] = {type: 'wall', colour: cli.colour, owner: cli.team};
+function decideBlockTrail(g, c) {	//Determines whether to leave a empty block or a bomb at the player's previous position.
+	if(c.entityUnderneath===null) {
+		g.rooms[c.room].map[c.yPos][c.xPos] = {type: 'air'};
+	} else if(c.entityUnderneath==='bomb') {
+		g.rooms[c.room].map[c.yPos][c.xPos] = {type: 'bomb'};
+	} else if(c.entityUnderneath==='wall') {
+		if(g.rooms[c.room].gameMode==='ctf') {
+			g.rooms[c.room].map[c.yPos][c.xPos] = {type: 'wall', colour: c.colour, owner: c.team};
 		} else {
-			rooms[cli.room].map[cli.yPos][cli.xPos] = {type: 'wall', colour: cli.colour, owner: cli.username};
+			g.rooms[c.room].map[c.yPos][c.xPos] = {type: 'wall', colour: c.colour, owner: c.username};
 		}
 	}
-	cli.entityUnderneath = null;
+	c.entityUnderneath = null;
 }
-function movePlayer(cli, rooms, deltaX, deltaY) {
-	cli.xPos+=deltaX;
-	cli.yPos+=deltaY;
-	rooms[cli.room].map[cli.yPos][cli.xPos] = { type: 'player', id: cli.id, username: cli.username, colour: cli.colour, entityUnderneath: cli.entityUnderneath };
+function movePlayer(g, c, deltaX, deltaY) {
+	c.xPos+=deltaX;
+	c.yPos+=deltaY;
+	g.rooms[c.room].map[c.yPos][c.xPos] = { type: 'player', id: c.id, username: c.username, colour: c.colour, entityUnderneath: c.entityUnderneath };
 }
 
-module.exports = function(io, cli, rooms, deltaX, deltaY) {
-	if(cli.room!==null) {
-		if(!hackedMovement(cli, deltaX, deltaY) && validDestination(cli, rooms, deltaX, deltaY)) {
-			decideBlockTrail(cli, rooms);
+module.exports = function(g, c, deltaX, deltaY) {
+	if(c.room!==null) {
+		if(!hackedMovement(c, deltaX, deltaY) && validDestination(g, c, deltaX, deltaY)) {
+			decideBlockTrail(g, c);
 
-			if(pickedUpBomb(cli, rooms, deltaX, deltaY)) {
-				cli.bombs++;
-				cli.emit('updateBombs', cli.bombs);
+			if(pickedUpBomb(g, c, deltaX, deltaY)) {
+				c.bombs++;
+				c.emit('updateBombs', c.bombs);
 			}
 
 			var walkedOnWall = false;
-			if(rooms[cli.room].map[cli.yPos+deltaY][cli.xPos+deltaX].type==='wall') {
-				if(rooms[cli.room].map[cli.yPos+deltaY][cli.xPos+deltaX].colour===cli.colour) {
+			if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='wall') {
+				if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].colour===c.colour) {
 					walkedOnWall = true;
 				}
 			}
 
-			movePlayer(cli, rooms, deltaX, deltaY);
-			if(walkedOnWall) { cli.entityUnderneath='wall'; }
-			meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
+			movePlayer(g, c, deltaX, deltaY);
+			if(walkedOnWall) { c.entityUnderneath='wall'; }
+			m.updateMiniMapsInYourRoom(g, c);
 		}
 	}
 };

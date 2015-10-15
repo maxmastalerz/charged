@@ -9,7 +9,7 @@ $('#data').keydown(function(e) {
 	if(e.which==27) {			//ESC
 		$('#game').focus();
 	} else if(e.which==13) {	//ENTER
-		$('#datasend').trigger('click');
+		$('#datasend').trigger('cck');
 		$('#game').focus();
 	}
 });
@@ -34,10 +34,10 @@ setInterval(function() {
 	if(!(holdingUp && holdingDown)) {
 		if((upCount>0) || holdingUp) {
 			if(upCount>0) { upCount--; }
-			srv.emit('move', 0, -1);
+			s.emit('move', 0, -1);
 		} else if((downCount>0) || holdingDown) {
 			if(downCount>0) { downCount--; }
-			srv.emit('move', 0, 1);
+			s.emit('move', 0, 1);
 		}
 	} else {
 		upCount = downCount = 0;
@@ -45,21 +45,21 @@ setInterval(function() {
 	if(!(holdingLeft && holdingRight)) {
 		if((leftCount>0) || holdingLeft) {
 			if(leftCount>0) { leftCount--; }
-			srv.emit('move', -1, 0);
+			s.emit('move', -1, 0);
 		} else if((rightCount>0) || holdingRight) {
 			if(rightCount>0) { rightCount--; }
-			srv.emit('move', 1, 0);
+			s.emit('move', 1, 0);
 		}
 	} else {
 		leftCount = rightCount = 0;
 	}
 	if((spaceCount>0) || holdingSpace) {
 		if(spaceCount>0) { spaceCount--; }
-		srv.emit('placeBomb');
+		s.emit('placeBomb');
 	}
 	if((bCount>0) || holdingB) {
 		if(bCount>0) { bCount--; }
-		srv.emit('placeWall');
+		s.emit('placeWall');
 	}
 }, 122);
 

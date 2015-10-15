@@ -1,13 +1,13 @@
-var meth = require('./meth.js');
+var m = require('./methods.js');
 var join = require('./join.js');
 
-function noCreationErrors(cli, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay) {
+function noCreationErrors(g, c, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay) {
 	var sentMessage = '';
-	if(room==='null' || room==='[object Object]' || room==='undefined' || room==='' || (/^\s+$/.test(room))) {
+	if(g.newRoom==='null' || g.newRoom==='[object Object]' || g.newRoom==='undefined' || g.newRoom==='' || (/^\s+$/.test(g.newRoom))) {
 		sentMessage+='Room name must not be blank\n';
-	} if(!meth.roomAvailable(rooms, room)) {
+	} if(!m.roomAvailable(g, g.newRoom)) {
 		sentMessage+='This noom name must be unique\n';
-	} if(room.length>15) {
+	} if(g.newRoom.length>15) {
 		sentMessage+='The length of the name surpassed 15 chars\n';
 	} if(maxPlayers<2 || maxPlayers>6) {
 		sentMessage+='Max players was outside the 2-6 range\n';
@@ -24,30 +24,30 @@ function noCreationErrors(cli, rooms, room, maxPlayers, gameMode, mapSize, mapVi
 	if(sentMessage==='') {
 		return true;
 	} else {
-		cli.emit('errorMessage', 'Issues that occured when creating room: \n'+sentMessage);
+		c.emit('errorMessage', 'Issues that occured when creating room: \n'+sentMessage);
 	}
 }
 
-function generateMap(rooms, room) {
+function generateMap(g) {
 	var density = 4;	//from 0 - 10. Lower values mean more space
-	var mapSize = rooms[room].mapSize;
+	var mapSize = g.rooms[g.newRoom].mapSize;
 
-	for(var y=0;y<rooms[room].mapSize;y++) {
-		for(var x=0;x<rooms[room].mapSize;x++) {
-			if(y===0 || y===rooms[room].mapSize-1 || x===0 || x===rooms[room].mapSize-1) {
-				rooms[room].map[y][x] = {type: 'indestructible', colour: '#4C767B'};
+	for(var y=0;y<g.rooms[g.newRoom].mapSize;y++) {
+		for(var x=0;x<g.rooms[g.newRoom].mapSize;x++) {
+			if(y===0 || y===g.rooms[g.newRoom].mapSize-1 || x===0 || x===g.rooms[g.newRoom].mapSize-1) {
+				g.rooms[g.newRoom].map[y][x] = {type: 'indestructible', colour: '#4C767B'};
 			} else {
 				var num = Math.floor((Math.random()*10)+0);
 				if(num<density) {
-					rooms[room].map[y][x] = {type: 'block'};
+					g.rooms[g.newRoom].map[y][x] = {type: 'block'};
 				} else {
-					rooms[room].map[y][x] = {type: 'air'};
+					g.rooms[g.newRoom].map[y][x] = {type: 'air'};
 				}
 			}
 		}
 	}
 
-	if(rooms[room].gameMode==='ctf') {
+	if(g.rooms[g.newRoom].gameMode==='ctf') {
 		var base = [
 			[0,0,1,1,1,1,1,1,1,1,1,1],
 			[0,1,0,0,0,0,0,0,0,2,2,1],
@@ -65,36 +65,36 @@ function generateMap(rooms, room) {
 		for(var by=0;by<base.length;by++) {
 			for(var bx=0;bx<base[0].length;bx++) {
 				if(base[by][bx]===0) {
-					rooms[room].map[by+1][bx+1] = {type: 'air'};
-					rooms[room].map[-by+mapSize-2][-bx+mapSize-2] = {type: 'air'};
+					g.rooms[g.newRoom].map[by+1][bx+1] = {type: 'air'};
+					g.rooms[g.newRoom].map[-by+mapSize-2][-bx+mapSize-2] = {type: 'air'};
 				} else if(base[by][bx]===1) {
-					rooms[room].map[by+1][bx+1] = {type: 'indestructible', colour: 'red'};
-					rooms[room].map[-by+mapSize-2][-bx+mapSize-2] = {type: 'indestructible', colour: 'blue'};
+					g.rooms[g.newRoom].map[by+1][bx+1] = {type: 'indestructible', colour: 'red'};
+					g.rooms[g.newRoom].map[-by+mapSize-2][-bx+mapSize-2] = {type: 'indestructible', colour: 'blue'};
 				} else if(base[by][bx]===2) {
-					rooms[room].map[by+1][bx+1] = {type: 'crate'};
-					rooms[room].map[-by+mapSize-2][-bx+mapSize-2] = {type: 'crate'};
+					g.rooms[g.newRoom].map[by+1][bx+1] = {type: 'crate'};
+					g.rooms[g.newRoom].map[-by+mapSize-2][-bx+mapSize-2] = {type: 'crate'};
 				} else if(base[by][bx]===3) {
-					rooms[room].map[by+1][bx+1] = {type: 'flag', colour: 'red'};
-					rooms[room].map[-by+mapSize-2][-bx+mapSize-2] = {type: 'flag', colour: 'blue'};
+					g.rooms[g.newRoom].map[by+1][bx+1] = {type: 'flag', colour: 'red'};
+					g.rooms[g.newRoom].map[-by+mapSize-2][-bx+mapSize-2] = {type: 'flag', colour: 'blue'};
 				}
 			}
 		}
 	}
 }
 
-module.exports = function(io, cli, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) {
-	room = meth.sanitizeInput(room);
-	if(roomPassword!==undefined) { roomPassword = meth.sanitizeInput(roomPassword); }
+module.exports = function(g, c, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) {
+	g.newRoom = m.sanitizeInput(room);
+	if(roomPassword!==undefined) { roomPassword = m.sanitizeInput(roomPassword); }
 	roomPassword = roomPassword || null;
 	maxPlayers = parseInt(maxPlayers) || 6;
-	gameMode = meth.sanitizeInput(gameMode) || 'ffa';
+	gameMode = m.sanitizeInput(gameMode) || 'ffa';
 	mapSize = parseInt(mapSize) || 51;
 	mapVisibility = parseInt(mapVisibility) || 31;
 	if(mapVisibility>mapSize) {	mapVisibility = mapSize; }
 	bombDelay = parseInt(bombDelay) || 1500;
 
-	if(noCreationErrors(cli, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay)) {
-		rooms[room] = {
+	if(noCreationErrors(g, c, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay)) {
+		g.rooms[g.newRoom] = {
 			players: {},
 			playerCount: 0,
 			maxPlayers: maxPlayers,
@@ -103,10 +103,10 @@ module.exports = function(io, cli, rooms, room, maxPlayers, gameMode, mapSize, m
 			mapVisibility: mapVisibility,
 			bombDelay: bombDelay,
 			roomPassword: roomPassword,
-			map: meth.Create2DArray(mapSize)
+			map: m.Create2DArray(mapSize)
 		};
 
-		generateMap(rooms, room);
-		join(io, cli, rooms, room);
+		generateMap(g);
+		join(g, c);
 	}
 };

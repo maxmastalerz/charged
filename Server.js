@@ -1,80 +1,75 @@
-var express 		= require('express'),
-	http 			= require('http'),
-	mongoose 		= require('mongoose'),
-	socket 			= require('socket.io');
+var i = {			//Includes
+	http: 			require('http'),
+	socket: 		require('socket.io'),
+	app: 			require('express')(),
+	leave: 			require('./leave.js'),
+	move: 			require('./move.js'),
+	join: 			require('./join.js'),
+	create: 		require('./roomCreator.js'),
+	bombPlacement: 	require('./bombPlacement.js'),
+	wallPlacement: 	require('./wallPlacement.js'),
+	m: 			require('./methods.js')
+};
+require('./express-routes.js')(i.app);
+require('./config.js')(i.app);
 
-var app = module.exports = express();
-var config = require('./config.js')(app);
-var leave = require('./leave.js');
-var move = require('./move.js');
-var join = require('./join.js');
-var create = require('./roomCreator.js');
-var bombPlacement = require('./bombPlacement.js');
-var wallPlacement = require('./wallPlacement.js');
-var meth = require('./meth.js');	//IMPORTANT! METHODS MUST BE LOADED LAST!
-require('./express-routes.js')(app);
-
-if(config.connectToMongoDB) {
-	mongoose.connect(config.db);
-	console.log('Connected to '+config.db);
-}
-
-var srv = http.createServer(app).listen(app.get('port'), function() {
-	console.log('Express server @ localhost:' + app.get('port') + '/ under ' + app.get('env') + ' environment');
+var s = i.http.createServer(i.app).listen(i.app.get('port'), function() {
+	console.log('Express server @ localhost:' + i.app.get('port') + '/ under ' + i.app.get('env') + ' environment');
 });
 
-var rooms = {};
+var g = {			//Global game data
+	io: i.socket.listen(s),
+	rooms: {}
+};
 
-var io = socket.listen(srv);
+g.io.sockets.on('connection', function(c) {
+	c.room = null;
+	c.username = i.m.generateUsername(g, c);
+	i.m.updateRoomLists(g);
 
-io.sockets.on('connection', function(cli) {
-	cli.room = null;
-	cli.username = meth.generateUsername(io, cli);
-	meth.updateRoomLists(io.of("/"), rooms);
-
-	cli.on('placeBomb', function() {
-		bombPlacement(io, cli, rooms);
+	c.on('placeBomb', function() {
+		i.bombPlacement(g, c);
 	});
-	cli.on('placeWall', function() {
-		wallPlacement(io, cli, rooms);
+	c.on('placeWall', function() {
+		i.wallPlacement(g, c);
 	});
-	cli.on('createRoom', function(room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) {
-		create(io, cli, rooms, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword);
+	c.on('createRoom', function(room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) {
+		i.create(g, c, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword);
 	});
-	cli.on('clearDebris', function() {
-		meth.updateMiniMapsInYourRoom(io.of("/"), rooms, cli);
+	c.on('clearDebris', function() {
+		i.m.updateMiniMapsInYourRoom(g, c);
 	});
-	cli.on('changeName', function(newName) {
-		meth.changeName(io, cli, rooms, newName);
+	c.on('changeName', function(newName) {
+		i.m.changeName(g, c, newName);
 	});
-	cli.on('switchRoom', function(newRoom) {
-		join(io, cli, rooms, newRoom);
+	c.on('switchRoom', function(newRoom) {
+		i.join(g, c, newRoom);
 	});
-	cli.on('disconnect', function() {
-		leave(io, cli, rooms);
+	c.on('disconnect', function() {
+		i.leave(g, c);
 	});
-	cli.on('returnToMenu', function() {
-		leave(io, cli, rooms);
+	c.on('returnToMenu', function() {
+		i.leave(g, c);
 	});
 
 	var timesPerSecond, distTraveledX, distTraveledY;
 	setInterval(function() {
 		if(timesPerSecond>18 || distTraveledY>9 || distTraveledX>9) {
-			leave(io, cli, rooms);
-			cli.emit('errorMessage', 'You have been kicked for hacking!');
+			i.leave(g, c);
+			c.emit('errorMessage', 'You have been kicked for hacking!');
 		}
 		timesPerSecond = distTraveledX = distTraveledY = 0;
 	}, 1000);
-	cli.on('move', function(deltaX, deltaY) {
+	c.on('move', function(deltaX, deltaY) {
 		if(deltaX!==0) { distTraveledX++; }
 		if(deltaY!==0) { distTraveledY++; }
 		timesPerSecond++;
-		move(io, cli, rooms, deltaX, deltaY);
+		i.move(g, c, deltaX, deltaY);
 	});
-	cli.on('sendchat', function(message) {
-		message = meth.sanitizeInput(message.replace(/\s+/g,' ')).trim();
+	c.on('sendchat', function(message) {
+		message = i.m.sanitizeInput(message.replace(/\s+/g,' ')).trim();
 		if(message!==null && message!=='' && !(/^\s+$/.test(message))) {
-			io.sockets.in(cli.room).emit('updateChat', cli.username, cli.colour, message);
+			g.io.sockets.in(c.room).emit('updateChat', c.username, c.colour, message);
 		}
 	});
  });

@@ -10,10 +10,10 @@ Next steps:
 7. Display the players in order from highest score to lowest. Similar to the http://agar.io leaderboard.
 8. Ability to jump over walls. How should the player get this ability?
 9. Make it easier to kill other players...
+10. Make CTF players spawn as different shades of red or blue
 
 Known issues:
 1. Menu font not loading properly on first load.
-2. Make CTF players spawn as different shades of red or blue
-3. CTF Flags can be blown up by bombs.
-4. There is no chat spam prevention yet. Protection must be implemented on the server-side.
-5. Detection for key emitions that surpass the allowed amount is not perfect. It relies on a timer that may kick a legitimate player.
+2. CTF Flags can be blown up by bombs.
+3. There is no chat spam prevention yet. Protection must be implemented on the server-side.
+4. Detection for key emitions that surpass the allowed amount is not perfect. It relies on a timer that may kick a legitimate player.

@@ -7,7 +7,7 @@ module.exports = function(app) {
 	app.engine('html', hogan);
 
 	app.configure(function() {
-		app.set('port', process.env.PORT || 80);
+		app.set('port', process.env.PORT || 8080);
 		app.set('env', process.env.NODE_ENV || 'development');
 		app.set('views', __dirname + '/views');
 		app.set('view engine', 'html');
@@ -29,14 +29,6 @@ module.exports = function(app) {
 	app.configure('production', function() {
 		app.use(express.errorHandler());
 	});
-
-	this.connectToMongoDB = false;
-	this.databases = {
-		'development': 'mongodb://localhost:27017/development',
-		'test': 'mongodb://localhost:27017/test',
-		'production': 'mongodb://localhost:27017/production'
-	};
-	this.db = databases[app.get('env')];
 
 	return this;
 };

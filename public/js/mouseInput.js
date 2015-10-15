@@ -1,11 +1,11 @@
 $('#datasend').click( function() {
 	var message = $('#data').val();
 	$('#data').val('');
-	srv.emit('sendchat', message);
+	s.emit('sendchat', message);
 	scrollChat();
 });
 $('#changeName').click(function() {
-	srv.emit('changeName', prompt('Choose a custom name: '));
+	s.emit('changeName', prompt('Choose a custom name: '));
 });
 
 $('#roombutton').click(function(){
@@ -23,8 +23,8 @@ $('#roombutton').click(function(){
 	$('#mapVisibility').val('');
 	$('#bombDelay').val('');
 	$('#roomPassword').val('');
-	srv.emit('createRoom', name, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword);
+	s.emit('createRoom', name, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword);
 });
 $('#returnToMenu').click(function(e) {
-	srv.emit('returnToMenu');
+	s.emit('returnToMenu');
 });

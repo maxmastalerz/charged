@@ -2,18 +2,36 @@
 
 ## About
 
-Charged is a multiplayer browser game constructed using NodeJS, SocketIO, ExpressJS. The game is a clone of bomberman and you can play it [here](http://tic-tic-boom.herokuapp.com/).
+Charged is a multiplayer browser game constructed using NodeJS, SocketIO, ExpressJS. The game was originally based of bomberman and you can play it [here](http://us-charged.herokuapp.com/).
 
-## Goal
+## Local install
 
-Currently the game's goal has not been determined. You are able to kill other players, however there is no record of kills/score/times to give the game purpose. Ideas and suggestions in the category would be appreciated.
+```
+git clone https://github.com/meaniostack/charged.git
+cd <dir>
+node Server.js
+```
 
-## Game controls
+Go to [localhost:8080](http://localhost:8080)
 
-Move with WASD keys
+## Game instructions
+
+Join an existing room or create one.
+
+To create a room, name it and select it's game mode
+Free For All / Teams / Capture The Flag / King Of The Hill / Humans vs Bots
+You may customize your room with optional settings.
+
+Move with WASD
 Place bombs with SPACE
-Switch between game and chat with 'T' & ESC
-ENTER will send your message and focus back on the game
+Place walls with B key
+Focus on chat with T key
+Focus on game with ESC
+
+
+## Developer API
+
+Can be found [here](https://github.com/meaniostack/charged/blob/master/api.md).
 
 ## Contribute
 
