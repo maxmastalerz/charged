@@ -11,31 +11,48 @@ move: 			require('./move.js'),
 join: 			require('./join.js'),
 create: 		require('./roomCreator.js'),
 bombPlacement: 	require('./bombPlacement.js'),
-wallPlacement: 	require('./wallPlacement.js'),
-m: 				require('./methods.js')
+wallPlacement: 	require('./wallPlacement.js')
 ```
 
 ## g : The game object
 
-`g.io.sockets.emit('eventName', optionalParameters);`									//Will send every client an event;
-`g.rooms`																				//All the rooms
+`g.io.of("/")`														SocketIO's default namespace
 
-A room's properties:
-	players / playerCount / maxPlayers / gameMode / mapSize / mapVisibility / bombDelay / roomPassword / map
+`g.io.sockets.emit('eventName', optionalParameters);`				Sends every client an event;
 
-g.io.of("/")																						//SocketIO's default namespace
-g.newRoom																							//The new room being created
+`g.rooms[roomName] = {`												A specific room from the rooms array and it's properties shown:
+	players: {
+		username1: clientsId,
+		username2: clientsId
+	}
+	playerCount: 2
+	maxPlayers: 6
+	gameMode: 'ffa'
+	mapSize: 51
+	mapVisibility: 31
+	bombDelay: 3000
+	roomPassword: null
+	map: m.Create2DArray(mapSize)
+};
+```
 
 ## s : The server object.
 
-s.emit('move', deltaX, deltaY)															//Moves player depending on deltaX, or deltaY values.
-s.emit('checkRoomPassword', room, prompt('Input the password: '))						//Asks server to check if the room password input was correct
-s.emit('placeBomb')																		//Places wall at the client's location
-s.emit('placeWall')																		//Places wall at the client's location
-s.emit('sendchat', message)																//Sends a chat message to the server for validation and distribution
-s.emit('changeName', prompt('Choose a custom name'))									//Changes player's name depending on their input.
-s.emit('createRoom', name, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) 	//Only a room name is required. The rest is optional, and has def values
-s.emit('returnToMenu')																	//Kicks the player, and returns them to the menu.
+`s.emit('move', deltaX, deltaY)`															//Moves player depending on deltaX, or deltaY values.
+
+`s.emit('checkRoomPassword', room, prompt('Input the password: '))`						//Asks server to check if the room password input was correct
+
+`s.emit('placeBomb')`																		//Places wall at the client's location
+
+`s.emit('placeWall')`																		//Places wall at the client's location
+
+`s.emit('sendchat', message)`																//Sends a chat message to the server for validation and distribution
+
+`s.emit('changeName', prompt('Choose a custom name'))`									//Changes player's name depending on their input.
+
+`s.emit('createRoom', name, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword)` 	//Only a room name is required. The rest is optional, and has def values
+
+`s.emit('returnToMenu')`																	//Kicks the player, and returns them to the menu.
 
 s.on('eventName', callback)																//Listen for emitions sent to the server
 

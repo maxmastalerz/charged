@@ -7,11 +7,12 @@ var i = {			//Includes
 	join: 			require('./join.js'),
 	create: 		require('./roomCreator.js'),
 	bombPlacement: 	require('./bombPlacement.js'),
-	wallPlacement: 	require('./wallPlacement.js'),
-	m: 			require('./methods.js')
+	wallPlacement: 	require('./wallPlacement.js')
 };
 require('./express-routes.js')(i.app);
 require('./config.js')(i.app);
+
+var m = require('./methods.js');
 
 var s = i.http.createServer(i.app).listen(i.app.get('port'), function() {
 	console.log('Express server @ localhost:' + i.app.get('port') + '/ under ' + i.app.get('env') + ' environment');
