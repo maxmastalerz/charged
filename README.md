@@ -7,14 +7,14 @@ Charged is a multiplayer browser game constructed using NodeJS, SocketIO, Expres
 ## Local install
 
 ```
-git clone https://github.com/meaniostack/charged.git
-npm install
+$ git clone https://github.com/meaniostack/charged.git
+$ npm install
 ```
 
 ## Running the app
 
 ```
-node Server.js
+$ node Server.js
 ```
 
 Visit [localhost:8080](http://localhost:8080)
@@ -40,9 +40,6 @@ Click `CREATE AND JOIN`
 
 ## Game instructions
 
-Join an existing room or create one.
-You may customize your room with optional settings.
-
 - Move with WASD
 - Place bombs with SPACE
 - Place walls with B key
@@ -50,11 +47,24 @@ You may customize your room with optional settings.
 - Focus on game with ESC
 
 
-## Developer API
+## Developers
 
-Can be found [here](https://github.com/meaniostack/charged/blob/master/api.md).
+The API can be found [here](https://github.com/meaniostack/charged/blob/master/api.md).
+
+- Max Mastalerz: [GitHub](https://github.com/meaniostack/) [Website](http://maxmastalerz.com/)
+
+- FillInYourName [GitHub](https://github.com/username/) [Website](http://example.com/)
+
+- FillInYourName [GitHub](https://github.com/username/) [Website](http://example.com/)
+
+- FillInYourName [GitHub](https://github.com/username/) [Website](http://example.com/)
+
+- FillInYourName [GitHub](https://github.com/username/) [Website](http://example.com/)
 
 ## Contribute
 
-Pull requests, and ideas are greatly appreciated. Add me on Skype to discuss the project, or to become a team developer.
-My username is: max.mastalerz
+Pull requests, and ideas are greatly appreciated. Add me on Skype or Facebook to discuss the project, or to become a team developer.
+
+Facebook: Max Mastalerz
+
+Skype: max.mastalerz

@@ -2,6 +2,7 @@ Most code intereactions that you do will fall under one of these 5 objects:
 
 ## i : The includes object (Only present in Server.js)
 
+```
 http: 			require('http'),
 socket: 		require('socket.io'),
 app: 			require('express')(),
@@ -12,12 +13,12 @@ create: 		require('./roomCreator.js'),
 bombPlacement: 	require('./bombPlacement.js'),
 wallPlacement: 	require('./wallPlacement.js'),
 m: 				require('./methods.js')
+```
 
 ## g : The game object
 
-g.io.sockets.emit('eventName', optionalParameters);													//Will send every client an event;
-g.rooms																								//All the rooms
-g.rooms[c.room]																						//The client's room
+`g.io.sockets.emit('eventName', optionalParameters);`									//Will send every client an event;
+`g.rooms`																				//All the rooms
 
 A room's properties:
 	players / playerCount / maxPlayers / gameMode / mapSize / mapVisibility / bombDelay / roomPassword / map
