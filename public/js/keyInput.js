@@ -9,7 +9,7 @@ $('#data').keydown(function(e) {
 	if(e.which==27) {			//ESC
 		$('#game').focus();
 	} else if(e.which==13) {	//ENTER
-		$('#datasend').trigger('cck');
+		$('#datasend').trigger('click');
 		$('#game').focus();
 	}
 });
