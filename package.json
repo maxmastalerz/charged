@@ -1,6 +1,6 @@
 {
-  "name": "Boilerplate",
-  "description": "A cool boilerplate.",
+  "name": "Charged",
+  "description": "Charged is a multiplayer browser game constructed using NodeJS, SocketIO, ExpressJS.",
   "version": "0.0.1",
   "author": {
       "name": "Max Mastalerz",
@@ -18,5 +18,10 @@
   },
   "engines": {
       "node": "4.2.0."
-  }
+  },
+  "repository": {
+      "type" : "git",
+      "url" : "https://github.com/meaniostack/charged.git"
+  },
+  "license": "MIT"
 }
