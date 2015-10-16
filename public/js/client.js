@@ -23,6 +23,27 @@ loadImages(function(imagesReturned) {
 	s.on('updateColour', function(col) {
 		colour = col;
 	});
+	s.on('flagStolen', function(flagStolen) {
+		if(flagStolen==='red' && colour==='#B20000') {
+			updateChat('SERVER', '#00FFFF', '<font style="color: blue; font-weight: bold;">Blue stole your flag!</font>');
+		} else if(flagStolen==='blue' && colour==='#0000B2') {
+			updateChat('SERVER', '#00FFFF', '<font style="color: red; font-weight: bold;">Red stole your flag!</font>');
+		}
+	});
+	s.on('flagDropped', function(flagDropped) {
+		if(flagDropped==='red' && colour==='#B20000') {
+			updateChat('SERVER', '#00FFFF', '<font style="color: red; font-weight: bold;">Our flag was taken back!</font>');
+		} else if(flagDropped==='blue' && colour==='#0000B2') {
+			updateChat('SERVER', '#00FFFF', '<font style="color: blue; font-weight: bold;">Our flag was taken back!</font>');
+		}
+	});
+	s.on('flagCaptured', function(flagCaptured) {
+		if(flagCaptured==='red' && colour==='#B20000') {
+			updateChat('SERVER', '#00FFFF', '<font style="color: blue; font-weight: bold;">Blue has captured our flag!</font>');
+		} else if(flagCaptured==='blue' && colour==='#0000B2') {
+			updateChat('SERVER', '#00FFFF', '<font style="color: red; font-weight: bold;">Red has captured our flag!</font>');
+		}
+	});
 	s.on('roomProtected', function(room) {
 		s.emit('checkRoomPassword', room, prompt('This room requires a password: '));
 	});

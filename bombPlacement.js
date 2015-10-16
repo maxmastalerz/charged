@@ -75,11 +75,23 @@ function checkForDeath(g, c) {
 		var iteratedClient = m.clientFromUsername(g, c, username);
 		if(g.rooms[c.room].map[iteratedClient.yPos][iteratedClient.xPos].type=='air') {
 			iteratedClient.lives--;
+			if(iteratedClient.carryingFlag==='red') {
+				g.rooms[c.room].map[3][3].type='flag';
+				g.rooms[c.room].map[3][3].colour='red';
+				g.io.sockets.in(c.room).emit('flagDropped', iteratedClient.carryingFlag);
+			} else if(iteratedClient.carryingFlag==='blue') {
+				g.rooms[c.room].map[g.rooms[c.room].mapSize-4][g.rooms[c.room].mapSize-4].type='flag';
+				g.rooms[c.room].map[g.rooms[c.room].mapSize-4][g.rooms[c.room].mapSize-4].colour='blue';
+				g.io.sockets.in(c.room).emit('flagDropped', iteratedClient.carryingFlag);
+			}
+
+			iteratedClient.carryingFlag = undefined;
 			iteratedClient.emit('updateLives', iteratedClient.lives);
 			if(iteratedClient.lives===0) {
-				//do soming
+				m.leaveRoom(g,c);
+			} else {
+				m.spawn(g, iteratedClient);
 			}
-			m.spawn(g, iteratedClient);
 		}
 	}
 }

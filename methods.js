@@ -1,4 +1,4 @@
-var sillyName = require('sillyname');
+var generateRandomUsername = require('./generateRandomUsername.js');
 var sanitizeHtml = require('sanitize-html');
 var leave = require('./leave.js');
 
@@ -127,7 +127,7 @@ module.exports = {
 	generateUsername: function(g, c) {
 		var generated;
 		while(true) {
-			generated = sillyName();
+			generated = generateRandomUsername();
 			if(module.exports.usernameAvailable(g, generated)) {
 				return generated;
 			}
@@ -155,5 +155,8 @@ module.exports = {
 	},
 	sanitizeInput: function(input) {
 		return sanitizeHtml(input);
+	},
+	leaveRoom: function(g, c) {
+		leave(g, c);
 	}
 };

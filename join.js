@@ -16,6 +16,7 @@ function connectToRoom(g, c, room) {
 	c.bombs = 7;
 	c.wallsInUse = 0;
 	c.lives = 3;
+	c.carryingFlag = undefined;
 	if(g.rooms[c.room].gameMode==='ctf') {
 		if(g.rooms[c.room].playerCount%2===0) {
 			c.team = 'red';c.colour = '#B20000';

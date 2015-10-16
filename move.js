@@ -6,7 +6,7 @@ function hackedMovement(c, deltaX, deltaY) {
 	}
 }
 function validDestination(g, c, deltaX, deltaY) {
-	if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='air' || g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='crate') {
+	if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='air' || g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='crate' || canPickUpFlag(g,c,deltaX,deltaY)) {
 		return true;
 	}
 	if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='wall') {
@@ -21,6 +21,26 @@ function validDestination(g, c, deltaX, deltaY) {
 function pickedUpBomb(g, c, deltaX, deltaY) {
 	if(g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].type==='crate') {
 		return true;
+	}
+}
+function canPickUpFlag(g, c, deltaX, deltaY) {
+	if(g.rooms[c.room].gameMode==='ctf') {
+		if(g.rooms[c.room].map[c.xPos+deltaX][c.yPos+deltaY].type==='flag') {
+			if(c.team==='red' && g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].colour==='blue') {
+				c.carryingFlag='blue';
+				g.rooms[c.room].map[c.yPos][c.xPos].carryingFlag = 'blue';
+				m.updateMiniMapsInYourRoom(g, c);
+				g.io.sockets.in(c.room).emit('flagStolen', c.carryingFlag);
+				return true;
+			}
+			if(c.team==='blue' && g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].colour==='red') {
+				c.carryingFlag='red';
+				g.rooms[c.room].map[c.yPos][c.xPos].carryingFlag = 'red';
+				m.updateMiniMapsInYourRoom(g, c);
+				g.io.sockets.in(c.room).emit('flagStolen', c.carryingFlag);
+				return true;
+			}
+		}
 	}
 }
 function decideBlockTrail(g, c) {	//Determines whether to leave a empty block or a bomb at the player's previous position.
@@ -40,7 +60,22 @@ function decideBlockTrail(g, c) {	//Determines whether to leave a empty block or
 function movePlayer(g, c, deltaX, deltaY) {
 	c.xPos+=deltaX;
 	c.yPos+=deltaY;
-	g.rooms[c.room].map[c.yPos][c.xPos] = { type: 'player', id: c.id, username: c.username, colour: c.colour, entityUnderneath: c.entityUnderneath };
+	g.rooms[c.room].map[c.yPos][c.xPos] = { type: 'player', id: c.id, username: c.username, colour: c.colour, entityUnderneath: c.entityUnderneath, carryingFlag: c.carryingFlag };
+}
+function checkForFlagCapture(g,c) {
+	if(c.carryingFlag==='blue' && m.dist(c.xPos,c.yPos,3,3)<3) {
+		console.log('Red captured a flag!');
+		g.io.sockets.in(c.room).emit('flagCaptured', c.carryingFlag);
+		g.rooms[c.room].map[g.rooms[c.room].mapSize-4][g.rooms[c.room].mapSize-4].type='flag';
+		g.rooms[c.room].map[g.rooms[c.room].mapSize-4][g.rooms[c.room].mapSize-4].colour='blue';
+		c.carryingFlag = undefined;
+	} else if(c.carryingFlag==='red' && m.dist(c.xPos,c.yPos,g.rooms[c.room].mapSize-4,g.rooms[c.room].mapSize-4)<3) {
+		console.log('Blue captured a flag!');
+		g.io.sockets.in(c.room).emit('flagCaptured', c.carryingFlag);
+		g.rooms[c.room].map[3][3].type='flag';
+		g.rooms[c.room].map[3][3].colour='red';
+		c.carryingFlag = undefined;
+	}
 }
 
 module.exports = function(g, c, deltaX, deltaY) {
@@ -61,6 +96,7 @@ module.exports = function(g, c, deltaX, deltaY) {
 			}
 
 			movePlayer(g, c, deltaX, deltaY);
+			checkForFlagCapture(g,c);
 			if(walkedOnWall) { c.entityUnderneath='wall'; }
 			m.updateMiniMapsInYourRoom(g, c);
 		}
