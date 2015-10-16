@@ -1,16 +1,16 @@
 var m = require('./methods.js');
 var leave = require('./leave.js');
 
-function connectToRoom(g, c) {
+function connectToRoom(g, c, room) {
 	leave(g, c);
-	c.join(g.newRoom);
+	c.join(room);
 	c.emit('joinedRoom');
-	c.emit('updateChat', 'SERVER', '#00FFFF', 'You have joined \'' + g.newRoom+'\'');
-	c.broadcast.to(g.newRoom).emit('updateChat', 'SERVER', '#00FFFF', c.username + ' has joined this room');
-	c.room = g.newRoom;
+	c.emit('updateChat', 'SERVER', '#00FFFF', 'You have joined \'' + room+'\'');
+	c.broadcast.to(room).emit('updateChat', 'SERVER', '#00FFFF', c.username + ' has joined this room');
+	c.room = room;
 	g.rooms[c.room].players[c.username] = c.id;
 	m.updatePlayersListIn(g, c);
-	g.rooms[g.newRoom].playerCount = Object.keys(g.rooms[g.newRoom].players).length;
+	g.rooms[room].playerCount = Object.keys(g.rooms[room].players).length;
 	m.updateRoomLists(g);
 
 	c.bombs = 7;
@@ -29,19 +29,19 @@ function connectToRoom(g, c) {
 	m.spawn(g, c);
 }
 
-module.exports = function(g, c) {
-	if(g.rooms[g.newRoom].playerCount!=g.rooms[g.newRoom].maxPlayers) {
-		if(g.rooms[g.newRoom].roomPassword!==null) {
-			c.emit('roomProtected', g.newRoom);
+module.exports = function(g, c, room) {
+	if(g.rooms[room].playerCount!=g.rooms[room].maxPlayers) {
+		if(g.rooms[room].roomPassword!==null) {
+			c.emit('roomProtected', room);
 			c.on('checkRoomPassword', function(room, passwordInput) {
 				if(g.rooms[room].roomPassword===passwordInput) {
 					connectToRoom(g, c);
 				} else if(passwordInput!==null) {
-					c.emit('roomProtected', g.newRoom);
+					c.emit('roomProtected', room);
 				}
 			});
 		} else {
-			connectToRoom(g, c);
+			connectToRoom(g, c, room);
 		}
 	} else {
 		c.emit('updateChat', 'SERVER', '#00FFFF', 'You cannot join full g.rooms!');
