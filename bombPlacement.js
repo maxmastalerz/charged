@@ -43,7 +43,7 @@ function canPlaceBomb(c) {
 function destroyBlocks(g, c, bombY, bombX) {
 	g.rooms[c.room].map[bombY][bombX].type = 'air';
 	for(var i=-2;i<=2;i++) {
-		if((bombY+i)===g.rooms[c.room].mapSize || (bombY+i)===g.rooms[c.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || g.rooms[c.room].map[bombY+i][bombX].type==='crate' || g.rooms[c.room].map[bombY+i][bombX].type==='bomb' || g.rooms[c.room].map[bombY+i][bombX].type==='indestructible') {
+		if((bombY+i)===g.rooms[c.room].mapSize || (bombY+i)===g.rooms[c.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || (g.rooms[c.room].map[bombY+i][bombX].type!=='block' && g.rooms[c.room].map[bombY+i][bombX].type!=='player')) {
 			continue;
 		} else {
 			if(g.rooms[c.room].map[bombY+i][bombX].type!=='air') {
@@ -55,7 +55,7 @@ function destroyBlocks(g, c, bombY, bombX) {
 		}
 	}
 	for(var ii=-2;ii<=2;ii++) {
-		if((bombX+ii)===g.rooms[c.room].mapSize || (bombX+ii)===g.rooms[c.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || g.rooms[c.room].map[bombY][bombX+ii].type==='crate' || g.rooms[c.room].map[bombY][bombX+ii].type==='bomb' || g.rooms[c.room].map[bombY][bombX+ii].type==='indestructible') {
+		if((bombX+ii)===g.rooms[c.room].mapSize || (bombX+ii)===g.rooms[c.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || (g.rooms[c.room].map[bombY][bombX+ii].type!=='block' && g.rooms[c.room].map[bombY][bombX+ii].type!=='player')) {
 			continue;
 		} else {
 			if(g.rooms[c.room].map[bombY][bombX+ii].type!=='air') {
