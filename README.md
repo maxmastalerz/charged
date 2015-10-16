@@ -52,6 +52,8 @@ Click `CREATE AND JOIN`
 
 The API can be found [here](https://github.com/meaniostack/charged/blob/master/api.md).
 
+The next steps can be found [here](https://github.com/meaniostack/charged/blob/master/todo.md).
+
 - Max Mastalerz: [GitHub](https://github.com/meaniostack/) [Website](http://maxmastalerz.com/)
 
 - FillInYourName [GitHub](https://github.com/username/) [Website](http://example.com/)
