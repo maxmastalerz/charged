@@ -81,7 +81,7 @@ g.rooms[roomName] = {
 | `m.updateRoomLists(g)`                                                                              | Sends every client and updated room list                     |
 | `m.clientFromUsername(g, c, username)`                                                              | Returns a client object from a user with a specific username |
 | `m.roomAvailable(g, roomName)`                                                                      | Checks if a room name is available                           |
-| `m.updateMiniMapsInYourRoom(g, c)`                                                                  | Updates every client's game map view                         |
+| `m.updateMiniMapsInRoom(g, c.room)`                                                                  | Updates every client's game map view                         |
 | `m.spawn(g, c)`                                                                                     | Randomly spawns the client in the room                       |
 | `m.generateUsername(g, c)`                                                                          | Randomly generates the client's username                     |
 | `m.changeName(g, c , newName)`                                                                      | Changes the client's name                                    |

@@ -65,7 +65,6 @@ function updateLocalMap(map) {
 					ctx.fillText(map[y][x].username,((x)*(tileS+mapPad))+(tileS/2),((y)*(tileS+mapPad))-(tileS/2));
 					ctx.fillStyle = map[y][x].colour;
 					ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
-					console.log(map[y][x].carryingFlag);
 					if(map[y][x].carryingFlag!==undefined) {
 						console.log('entity is a player carrying  a flag!' + map[y][x].carryingFlag);
 						if(map[y][x].carryingFlag==='red') {

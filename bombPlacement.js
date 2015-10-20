@@ -1,94 +1,95 @@
 var m = require('./methods.js');
+var leave = require('./leave.js');
 
-function spawnPickup(g, c) {
+function spawnPickup(g, room) {
 	var x, y;
 	while(true) {
-		x = Math.floor((Math.random() * (g.rooms[c.room].mapSize-3)) + 2);
-		y = Math.floor((Math.random() * (g.rooms[c.room].mapSize-3)) + 2);
-		if(g.rooms[c.room].map[y][x].type==='air') {
+		x = Math.floor((Math.random() * (g.rooms[room].mapSize-3)) + 2);
+		y = Math.floor((Math.random() * (g.rooms[room].mapSize-3)) + 2);
+		if(g.rooms[room].map[y][x].type==='air') {
 			break;
 		}
 	}
-	g.rooms[c.room].map[y][x] = {type: 'crate'};
+	g.rooms[room].map[y][x] = {type: 'crate'};
 }
 
-function playersNearbySpawn(g, c, bombY, bombX) {
-	for(var username in g.rooms[c.room].players) {
-		var iteratedClient = m.clientFromUsername(g, c, username);
+function playersNearbySpawn(g, room, bombY, bombX) {
+	for(var username in g.rooms[room].players) {
+		var iteratedClient = m.clientFromUsername(g, username);
 		if(m.dist(iteratedClient.xPos,iteratedClient.yPos,bombX,bombY)<5) {
 			return true;
 		}
 	}
 }
 
-function scheduleRespawn(g, c, bombY, bombX) {
+function scheduleRespawn(g, room, bombY, bombX) {
 	setTimeout(function() {
-		if(c.room!==null) {
-			if(playersNearbySpawn(g, c, bombY, bombX) || g.rooms[c.room].map[bombY][bombX].type==="wall") {
-				scheduleRespawn(g, c, bombY,bombX);
-			} else if(g.rooms[c.room].map[bombY][bombX].type==='air') {
-				g.rooms[c.room].map[bombY][bombX].type = 'block';
-				m.updateMiniMapsInYourRoom(g, c);
+		if(g.rooms[room]!==undefined) {
+			if(playersNearbySpawn(g, room, bombY, bombX) || g.rooms[room].map[bombY][bombX].type==="wall") {
+				scheduleRespawn(g, room, bombY,bombX);
+			} else if(g.rooms[room].map[bombY][bombX].type==='air') {
+				g.rooms[room].map[bombY][bombX].type = 'block';
+				m.updateMiniMapsInRoom(g, room);
 			}
 		}
 	}, 15000);	//delay between trying to respawn the block that was blown up
 }
 
 function canPlaceBomb(c) {
-	if(c.room!==null && c.entityUnderneath===null && c.bombs>0) {
+	if(c.room!==undefined && c.entityUnderneath===null && c.bombs>0) {
 		return true;
 	}
 }
 
-function destroyBlocks(g, c, bombY, bombX) {
-	g.rooms[c.room].map[bombY][bombX].type = 'air';
+function destroyBlocks(g, room, bombY, bombX) {
+	g.rooms[room].map[bombY][bombX].type = 'air';
 	for(var i=-2;i<=2;i++) {
-		if((bombY+i)===g.rooms[c.room].mapSize || (bombY+i)===g.rooms[c.room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || (g.rooms[c.room].map[bombY+i][bombX].type!=='block' && g.rooms[c.room].map[bombY+i][bombX].type!=='player')) {
+		if((bombY+i)===g.rooms[room].mapSize || (bombY+i)===g.rooms[room].mapSize-1 || (bombY+i)===0 || (bombY+i)===-1 || (g.rooms[room].map[bombY+i][bombX].type!=='block' && g.rooms[room].map[bombY+i][bombX].type!=='player')) {
 			continue;
 		} else {
-			if(g.rooms[c.room].map[bombY+i][bombX].type!=='air') {
-				if(g.rooms[c.room].map[bombY+i][bombX].type!=='bomb' && g.rooms[c.room].map[bombY+i][bombX].type!=='player') {
-					scheduleRespawn(g, c, bombY+i,bombX);
+			if(g.rooms[room].map[bombY+i][bombX].type!=='air') {
+				if(g.rooms[room].map[bombY+i][bombX].type!=='bomb' && g.rooms[room].map[bombY+i][bombX].type!=='player') {
+					scheduleRespawn(g, room, bombY+i,bombX);
 				}
-				g.rooms[c.room].map[bombY+i][bombX].type = 'air';
+				g.rooms[room].map[bombY+i][bombX].type = 'air';
 			}
 		}
 	}
 	for(var ii=-2;ii<=2;ii++) {
-		if((bombX+ii)===g.rooms[c.room].mapSize || (bombX+ii)===g.rooms[c.room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || (g.rooms[c.room].map[bombY][bombX+ii].type!=='block' && g.rooms[c.room].map[bombY][bombX+ii].type!=='player')) {
+		if((bombX+ii)===g.rooms[room].mapSize || (bombX+ii)===g.rooms[room].mapSize-1 || (bombX+ii)===0 || (bombX+ii)===-1 || (g.rooms[room].map[bombY][bombX+ii].type!=='block' && g.rooms[room].map[bombY][bombX+ii].type!=='player')) {
 			continue;
 		} else {
-			if(g.rooms[c.room].map[bombY][bombX+ii].type!=='air') {
-				if(g.rooms[c.room].map[bombY][bombX+ii].type!=='bomb' && g.rooms[c.room].map[bombY][bombX+ii].type!=='player') {
-					scheduleRespawn(g, c, bombY,bombX+ii);
+			if(g.rooms[room].map[bombY][bombX+ii].type!=='air') {
+				if(g.rooms[room].map[bombY][bombX+ii].type!=='bomb' && g.rooms[room].map[bombY][bombX+ii].type!=='player') {
+					scheduleRespawn(g, room, bombY,bombX+ii);
 				}
-				g.rooms[c.room].map[bombY][bombX+ii] = {type: 'air'};
+				g.rooms[room].map[bombY][bombX+ii] = {type: 'air'};
 			}
 		}
 	}
-	spawnPickup(g, c);
-	m.updateMiniMapsInYourRoom(g, c);
+	spawnPickup(g, room);
+	m.updateMiniMapsInRoom(g, room);
 }
 
-function checkForDeath(g, c) {
-	for(var username in g.rooms[c.room].players) {
-		var iteratedClient = m.clientFromUsername(g, c, username);
-		if(g.rooms[c.room].map[iteratedClient.yPos][iteratedClient.xPos].type=='air') {
+function checkForDeath(g, room, c) {
+	for(var username in g.rooms[room].players) {
+		var iteratedClient = m.clientFromUsername(g, username);
+		if(g.rooms[room].map[iteratedClient.yPos][iteratedClient.xPos].type=='air') {
 			iteratedClient.lives--;
 			if(iteratedClient.carryingFlag==='red') {
-				g.rooms[c.room].map[3][3].type='flag';
-				g.rooms[c.room].map[3][3].colour='red';
-				g.io.sockets.in(c.room).emit('flagDropped', iteratedClient.carryingFlag);
+				g.rooms[room].map[3][3].type='flag';
+				g.rooms[room].map[3][3].colour='red';
+				g.io.sockets.in(room).emit('flagDropped', iteratedClient.carryingFlag);
 			} else if(iteratedClient.carryingFlag==='blue') {
-				g.rooms[c.room].map[g.rooms[c.room].mapSize-4][g.rooms[c.room].mapSize-4].type='flag';
-				g.rooms[c.room].map[g.rooms[c.room].mapSize-4][g.rooms[c.room].mapSize-4].colour='blue';
-				g.io.sockets.in(c.room).emit('flagDropped', iteratedClient.carryingFlag);
+				g.rooms[room].map[g.rooms[room].mapSize-4][g.rooms[room].mapSize-4].type='flag';
+				g.rooms[room].map[g.rooms[room].mapSize-4][g.rooms[room].mapSize-4].colour='blue';
+				g.io.sockets.in(room).emit('flagDropped', iteratedClient.carryingFlag);
 			}
 
 			iteratedClient.carryingFlag = undefined;
 			iteratedClient.emit('updateLives', iteratedClient.lives);
 			if(iteratedClient.lives===0) {
-				m.leaveRoom(g,c);
+				leave(g,c);
 			} else {
 				m.spawn(g, iteratedClient);
 			}
@@ -96,9 +97,9 @@ function checkForDeath(g, c) {
 	}
 }
 
-function broadcastExplosion(g, c, bombY, bombX) {
-	for(var username in g.rooms[c.room].players) {
-		var iteratedClient = m.clientFromUsername(g, c, username);
+function broadcastExplosion(g, room, bombY, bombX) {
+	for(var username in g.rooms[room].players) {
+		var iteratedClient = m.clientFromUsername(g, username);
 		iteratedClient.emit('explosionVisual', iteratedClient.miniMap, bombY-iteratedClient.offsetY, bombX-iteratedClient.offsetX);
 	}
 }
@@ -111,12 +112,15 @@ module.exports = function(g, c) {
 		c.bombs--;
 		c.emit('updateBombs', c.bombs);
 		g.rooms[c.room].map[c.yPos][c.xPos] = { type: 'player', id: c.id, username: c.username, colour: c.colour, entityUnderneath: c.entityUnderneath };
-		m.updateMiniMapsInYourRoom(g, c);
+		m.updateMiniMapsInRoom(g, c.room);
 
+		var room = c.room;
 		setTimeout(function() {
-			destroyBlocks(g, c, bombY, bombX);
-			broadcastExplosion(g, c, bombY, bombX);
-			checkForDeath(g, c);
+			if(g.rooms[room]!==undefined) {
+				destroyBlocks(g, room, bombY, bombX);
+				broadcastExplosion(g, room, bombY, bombX);
+				checkForDeath(g, room, c);
+			}
 		}, g.rooms[c.room].bombDelay);
 	}
 };

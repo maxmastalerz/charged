@@ -29,14 +29,14 @@ function canPickUpFlag(g, c, deltaX, deltaY) {
 			if(c.team==='red' && g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].colour==='blue') {
 				c.carryingFlag='blue';
 				g.rooms[c.room].map[c.yPos][c.xPos].carryingFlag = 'blue';
-				m.updateMiniMapsInYourRoom(g, c);
+				m.updateMiniMapsInRoom(g, c.room);
 				g.io.sockets.in(c.room).emit('flagStolen', c.carryingFlag);
 				return true;
 			}
 			if(c.team==='blue' && g.rooms[c.room].map[c.yPos+deltaY][c.xPos+deltaX].colour==='red') {
 				c.carryingFlag='red';
 				g.rooms[c.room].map[c.yPos][c.xPos].carryingFlag = 'red';
-				m.updateMiniMapsInYourRoom(g, c);
+				m.updateMiniMapsInRoom(g, c.room);
 				g.io.sockets.in(c.room).emit('flagStolen', c.carryingFlag);
 				return true;
 			}
@@ -98,7 +98,7 @@ module.exports = function(g, c, deltaX, deltaY) {
 			movePlayer(g, c, deltaX, deltaY);
 			checkForFlagCapture(g,c);
 			if(walkedOnWall) { c.entityUnderneath='wall'; }
-			m.updateMiniMapsInYourRoom(g, c);
+			m.updateMiniMapsInRoom(g, c.room);
 		}
 	}
 };

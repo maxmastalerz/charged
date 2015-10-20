@@ -15,8 +15,6 @@
 
 ## Things to fix/important things to implement:
 
-- If a player disconnects before their placed bomb blows up, it will crash the game. This is because c.room no longer exists when he exits.
-- If a player dies, he must go to the menu. However... The bomb debris must be cleared before he leaves. If not, it will crash the game.
 - Menu font not loading properly on first load.
 - There is no chat spam prevention yet. Protection must be implemented on the server-side.
 - Detection for key emitions that surpass the allowed amount is not perfect. It relies on a timer that may kick a legitimate player.

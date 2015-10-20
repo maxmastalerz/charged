@@ -1,6 +1,5 @@
 var generateRandomUsername = require('./generateRandomUsername.js');
 var sanitizeHtml = require('sanitize-html');
-var leave = require('./leave.js');
 
 function getSlice(arr, upper, lower) { return arr.slice(upper[0], lower[0]).map(function(row) { return row.slice(upper[1], lower[1]); }); }
 function componentToHex(c) { var hex = c.toString(16); return hex.length == 1 ? "0" + hex : hex; }
@@ -36,20 +35,17 @@ module.exports = {
 
 		g.io.sockets.emit('updateRooms', roomsCensored);
 	},
-	clientFromUsername: function(g, c, username) {
+	clientFromUsername: function(g, username) {
 		var ns = g.io.of("/");
-		var clientsInRoom = [c];
+		var clientsInRoom = [];
 
 		for (var id in ns.connected) {
-			var index = ns.connected[id].rooms.indexOf(c.room);
-			if(index !== -1) {
-				clientsInRoom.push(ns.connected[id]);
-			}
+			clientsInRoom.push(ns.connected[id]);
 		}
 
-		for(var c=0;c<clientsInRoom.length;c++) {
-			if(clientsInRoom[c].username===username) {
-				return clientsInRoom[c];
+		for(var client=0;client<clientsInRoom.length;client++) {
+			if(clientsInRoom[client].username===username) {
+				return clientsInRoom[client];
 			}
 		}
 	},
@@ -70,31 +66,31 @@ module.exports = {
 		}
 		return true;
 	},
-	updateMiniMapsInYourRoom: function(g, c) {
+	updateMiniMapsInRoom: function(g, room) {
 		var ns = g.io.of("/");
-		for(var username in g.rooms[c.room].players) {
-			var iteratedClient = module.exports.clientFromUsername(g, c, username);
+		for(var username in g.rooms[room].players) {
+			var iteratedClient = module.exports.clientFromUsername(g, username);
 
 			var x1, y1, x2, y2;
 
-			if(iteratedClient.yPos<((g.rooms[c.room].mapVisibility/2)-0.5)) {
+			if(iteratedClient.yPos<((g.rooms[room].mapVisibility/2)-0.5)) {
 				y1 = 0;
-			} else if(iteratedClient.yPos>(g.rooms[c.room].mapSize-(((g.rooms[c.room].mapVisibility/2)-0.5)))-1) {
-				y1 = g.rooms[c.room].mapSize-g.rooms[c.room].mapVisibility;
+			} else if(iteratedClient.yPos>(g.rooms[room].mapSize-(((g.rooms[room].mapVisibility/2)-0.5)))-1) {
+				y1 = g.rooms[room].mapSize-g.rooms[room].mapVisibility;
 			} else {
-				y1 = iteratedClient.yPos-((g.rooms[c.room].mapVisibility/2)-0.5);
+				y1 = iteratedClient.yPos-((g.rooms[room].mapVisibility/2)-0.5);
 			}
 
-			if(iteratedClient.xPos<((g.rooms[c.room].mapVisibility/2)-0.5)) {
+			if(iteratedClient.xPos<((g.rooms[room].mapVisibility/2)-0.5)) {
 				x1 = 0;
-			} else if(iteratedClient.xPos>(g.rooms[c.room].mapSize-(((g.rooms[c.room].mapVisibility/2)-0.5)))-1) {
-				x1 = g.rooms[c.room].mapSize-g.rooms[c.room].mapVisibility;
+			} else if(iteratedClient.xPos>(g.rooms[room].mapSize-(((g.rooms[room].mapVisibility/2)-0.5)))-1) {
+				x1 = g.rooms[room].mapSize-g.rooms[room].mapVisibility;
 			} else {
-				x1 = iteratedClient.xPos-((g.rooms[c.room].mapVisibility/2)-0.5);
+				x1 = iteratedClient.xPos-((g.rooms[room].mapVisibility/2)-0.5);
 			}
 
-			y2 = y1+g.rooms[c.room].mapVisibility;
-			x2 = x1+g.rooms[c.room].mapVisibility;
+			y2 = y1+g.rooms[room].mapVisibility;
+			x2 = x1+g.rooms[room].mapVisibility;
 
 			iteratedClient.miniMap = getSlice(g.rooms[iteratedClient.room].map, [y1,x1],[y2,x2]);
 			iteratedClient.emit('updateMap', iteratedClient.miniMap);
@@ -112,17 +108,17 @@ module.exports = {
 		if(g.rooms[c.room].map[c.yPos][c.xPos].type==='air' && g.rooms[c.room].map[c.yPos+1][c.xPos].type==='air' && g.rooms[c.room].map[c.yPos+1][c.xPos+1].type==='air') {
 			c.entityUnderneath = null;
 			g.rooms[c.room].map[c.yPos][c.xPos] = { type: 'player', id: c.id, username: c.username, colour: c.colour, entityUnderneath: null };
-			module.exports.updateMiniMapsInYourRoom(g, c);
+			module.exports.updateMiniMapsInRoom(g, c.room);
 		} else {
 			module.exports.spawn(g, c);	//Might recurse forever if no spawn point is found. Lol
 		}
 	},
-	updatePlayersListIn: function(g, c) {
+	updatePlayersListIn: function(g, room) {
 		var playersInRoom = [];
-		for(var player in g.rooms[c.room].players) {
+		for(var player in g.rooms[room].players) {
 			playersInRoom.push(player);
 		}
-		g.io.sockets.in(c.room).emit('updatePlayersList', playersInRoom);
+		g.io.sockets.in(room).emit('updatePlayersList', playersInRoom);
 	},
 	generateUsername: function(g, c) {
 		var generated;
@@ -141,12 +137,12 @@ module.exports = {
 				var oldName = c.username;
 				c.username = newName;
 				c.emit('updateChat', 'SERVER', '#00FFFF', 'Username was changed to: '+newName);
-				if(c.room!==null) {
+				if(c.room!==undefined) {
 					delete g.rooms[c.room].players[oldName];
 					g.rooms[c.room].players[newName] = c.id;
 					g.rooms[c.room].map[c.yPos][c.xPos] = { type: 'player', id: c.id, username: newName, colour: c.colour };
 					module.exports.updatePlayersListIn(g, c);
-					module.exports.updateMiniMapsInYourRoom(g, c);
+					module.exports.updateMiniMapsInRoom(g, c.room);
 				}
 			} else {
 				c.emit('usernameCreateError', 'Username restrictions: \n   1. Username must be unique \n   2. Username must not surpass 20 chars \nPlease try again: ');
@@ -155,8 +151,5 @@ module.exports = {
 	},
 	sanitizeInput: function(input) {
 		return sanitizeHtml(input);
-	},
-	leaveRoom: function(g, c) {
-		leave(g, c);
 	}
 };

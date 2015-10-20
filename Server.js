@@ -24,7 +24,7 @@ var g = {			//Global game data
 };
 
 g.io.sockets.on('connection', function(c) {
-	c.room = null;
+	c.room = undefined;
 	c.username = m.generateUsername(g, c);
 	m.updateRoomLists(g);
 
@@ -36,9 +36,6 @@ g.io.sockets.on('connection', function(c) {
 	});
 	c.on('createRoom', function(room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword) {
 		i.create(g, c, room, maxPlayers, gameMode, mapSize, mapVisibility, bombDelay, roomPassword);
-	});
-	c.on('clearDebris', function() {
-		m.updateMiniMapsInYourRoom(g, c);
 	});
 	c.on('changeName', function(newName) {
 		m.changeName(g, c, newName);

@@ -2,14 +2,16 @@ var m = require('./methods.js');
 var leave = require('./leave.js');
 
 function connectToRoom(g, c, room) {
-	leave(g, c);
+	if(c.room!==undefined) {
+		leave(g, c);
+	}
 	c.join(room);
 	c.emit('joinedRoom');
 	c.emit('updateChat', 'SERVER', '#00FFFF', 'You have joined \'' + room+'\'');
 	c.broadcast.to(room).emit('updateChat', 'SERVER', '#00FFFF', c.username + ' has joined this room');
 	c.room = room;
 	g.rooms[c.room].players[c.username] = c.id;
-	m.updatePlayersListIn(g, c);
+	m.updatePlayersListIn(g, c.room);
 	g.rooms[room].playerCount = Object.keys(g.rooms[room].players).length;
 	m.updateRoomLists(g);
 
