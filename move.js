@@ -64,13 +64,15 @@ function movePlayer(g, c, deltaX, deltaY) {
 }
 function checkForFlagCapture(g,c) {
 	if(c.carryingFlag==='blue' && m.dist(c.xPos,c.yPos,3,3)<3) {
-		console.log('Red captured a flag!');
+		g.rooms[c.room].redScore++;
+		g.io.sockets.in(c.room).emit('updateScore', g.rooms[c.room].redScore, g.rooms[c.room].blueScore);
 		g.io.sockets.in(c.room).emit('flagCaptured', c.carryingFlag);
 		g.rooms[c.room].map[g.rooms[c.room].mapSize-4][g.rooms[c.room].mapSize-4].type='flag';
 		g.rooms[c.room].map[g.rooms[c.room].mapSize-4][g.rooms[c.room].mapSize-4].colour='blue';
 		c.carryingFlag = undefined;
 	} else if(c.carryingFlag==='red' && m.dist(c.xPos,c.yPos,g.rooms[c.room].mapSize-4,g.rooms[c.room].mapSize-4)<3) {
-		console.log('Blue captured a flag!');
+		g.rooms[c.room].blueScore++;
+		g.io.sockets.in(c.room).emit('updateScore', g.rooms[c.room].redScore, g.rooms[c.room].blueScore);
 		g.io.sockets.in(c.room).emit('flagCaptured', c.carryingFlag);
 		g.rooms[c.room].map[3][3].type='flag';
 		g.rooms[c.room].map[3][3].colour='red';

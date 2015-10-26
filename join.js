@@ -25,6 +25,7 @@ function connectToRoom(g, c, room) {
 		} else {
 			c.team = 'blue';c.colour = '#0000B2';
 		}
+		c.emit('updateScore', g.rooms[room].redScore, g.rooms[room].blueScore);
 	}
 	c.emit('updateLives', c.lives);
 	c.emit('updateBombs', c.bombs);

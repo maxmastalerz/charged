@@ -14,6 +14,10 @@ loadImages(function(imagesReturned) {
 	s.on('updateBombs', function(bombs) {
 		bombCount = bombs;
 	});
+	s.on('updateScore', function(updatedRedScore, updatedBlueScore) {
+		redScore = updatedRedScore;
+		blueScore = updatedBlueScore;
+	});
 	s.on('updateWallsInUse', function(wallsInUse) {
 		wallCount = 3-wallsInUse;
 	});

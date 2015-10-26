@@ -66,7 +66,6 @@ function updateLocalMap(map) {
 					ctx.fillStyle = map[y][x].colour;
 					ctx.fillRect((x)*(tileS+mapPad),(y)*(tileS+mapPad),tileS,tileS);
 					if(map[y][x].carryingFlag!==undefined) {
-						console.log('entity is a player carrying  a flag!' + map[y][x].carryingFlag);
 						if(map[y][x].carryingFlag==='red') {
 							ctx.drawImage(images.redflag, (x)*(tileS+mapPad), (y)*(tileS+mapPad), tileS, tileS);
 						} else if(map[y][x].carryingFlag==='blue') {
@@ -90,5 +89,12 @@ function updateLocalMap(map) {
 	}
 	for(var l=0;l<lifeCount;l++) {
 		ctx.drawImage(images.heart,w+4,(-l*25)+h,22,22);
+	}
+
+	if(redScore!=='' || blueScore!=='') {
+		ctx.font = w*0.03+'pt Bit';
+		ctx.fillStyle = 'red';ctx.fillText(redScore, w*0.92, h*0.1);
+		ctx.fillStyle = 'white';ctx.fillText(' | ', w*0.95, h*0.1);
+		ctx.fillStyle = 'blue';ctx.fillText(blueScore, w*0.98, h*0.1);
 	}
 }

@@ -97,14 +97,19 @@ module.exports = function(g, c, room, maxPlayers, gameMode, mapSize, mapVisibili
 		g.rooms[room] = {
 			players: {},
 			playerCount: 0,
-			maxPlayers: maxPlayers,
-			gameMode: gameMode,
-			mapSize: mapSize,
-			mapVisibility: mapVisibility,
-			bombDelay: bombDelay,
-			roomPassword: roomPassword,
-			map: m.Create2DArray(mapSize)
+			maxPlayers,
+			gameMode,
+			mapSize,
+			mapVisibility,
+			bombDelay,
+			roomPassword,
+			map: m.Create2DArray(mapSize),
 		};
+
+		if(g.rooms[room].gameMode==='ctf') {
+			g.rooms[room].redScore = 0;
+			g.rooms[room].blueScore = 0;
+		}
 
 		generateMap(g, room);
 		join(g, c, room);
