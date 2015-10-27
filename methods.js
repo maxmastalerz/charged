@@ -4,12 +4,6 @@ var sanitizeHtml = require('sanitize-html');
 function getSlice(arr, upper, lower) { return arr.slice(upper[0], lower[0]).map(function(row) { return row.slice(upper[1], lower[1]); }); }
 function componentToHex(c) { var hex = c.toString(16); return hex.length == 1 ? "0" + hex : hex; }
 function rgbToHex(r, g, b) { return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b); }
-function getRandColour() {
-	var rgb = [Math.random() * 256, Math.random() * 256, Math.random() * 256];
-	var mix = [5*51, 5*51, 5*51];
-	var mixedrgb = [rgb[0] + mix[0], rgb[1] + mix[1], rgb[2] + mix[2]].map(function(x) { return Math.round(x/2.0); });
-	return rgbToHex(mixedrgb[0], mixedrgb[1], mixedrgb[2]);
-}
 
 module.exports = {
 	Create2DArray: function(rows) {
@@ -99,8 +93,6 @@ module.exports = {
 		}
 	},
 	spawn: function(g, c) {
-		if(g.rooms[c.room].gameMode==='ffa') { c.colour = getRandColour(); }
-		c.emit('updateColour', c.colour);
 		c.xPos = Math.floor((Math.random() * (g.rooms[c.room].mapSize-3)) + 2);
 		c.yPos = Math.floor((Math.random() * (g.rooms[c.room].mapSize-3)) + 2);
 
@@ -141,7 +133,7 @@ module.exports = {
 					delete g.rooms[c.room].players[oldName];
 					g.rooms[c.room].players[newName] = c.id;
 					g.rooms[c.room].map[c.yPos][c.xPos] = { type: 'player', id: c.id, username: newName, colour: c.colour };
-					module.exports.updatePlayersListIn(g, c);
+					module.exports.updatePlayersListIn(g, c.room);
 					module.exports.updateMiniMapsInRoom(g, c.room);
 				}
 			} else {
@@ -151,5 +143,24 @@ module.exports = {
 	},
 	sanitizeInput: function(input) {
 		return sanitizeHtml(input);
+	},
+	mapAsNumbers: function(map) {
+		var mapAsNumbers = [];
+		for(var y=0;y<map.length;y++) {
+			for(var x=0;x<map.length;x++) {
+				if(map[y][x].type==='air') {
+					mapAsNumbers[y][x] = 1;
+				} else {
+					mapAsNumbers[y][x] = 0;
+				}
+			}
+		}
+		return mapAsNumbers;
+	},
+	getRandColour: function() {
+		var rgb = [Math.random() * 256, Math.random() * 256, Math.random() * 256];
+		var mix = [5*51, 5*51, 5*51];
+		var mixedrgb = [rgb[0] + mix[0], rgb[1] + mix[1], rgb[2] + mix[2]].map(function(x) { return Math.round(x/2.0); });
+		return rgbToHex(mixedrgb[0], mixedrgb[1], mixedrgb[2]);
 	}
 };

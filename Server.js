@@ -26,6 +26,7 @@ var g = {			//Global game data
 g.io.sockets.on('connection', function(c) {
 	c.room = undefined;
 	c.username = m.generateUsername(g, c);
+	c.isBot = false;
 	m.updateRoomLists(g);
 
 	c.on('placeBomb', function() {

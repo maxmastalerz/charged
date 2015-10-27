@@ -13,6 +13,13 @@ function removeFromPlayerList(g, room, username) {
 	}
 }
 
+function removePlayerFromTeam(g, c, room) {
+	if(c.team!==undefined) {
+		if(c.team==='red') { g.rooms[room].redPlayers--; }
+		else if(c.team==='blue') { g.rooms[room].bluePlayers--; }
+	}
+}
+
 function deleteRoomIfEmpty(g, room) {
 	g.rooms[room].playerCount = Object.keys(g.rooms[room].players).length;
 	if(g.rooms[room].playerCount===0) {
@@ -26,6 +33,9 @@ module.exports = function(g, c) {
 		c.leave(room);
 		c.room = undefined;
 		c.emit('leftRoom');
+		if(g.rooms[room].gameMode==='ctf') {
+			removePlayerFromTeam(g, c, room);
+		}
 		removeFromPlayerList(g, room, c.username);	//This will also delete rooms without players
 
 		if(g.rooms[room]!==undefined) {

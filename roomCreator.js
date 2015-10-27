@@ -107,8 +107,10 @@ module.exports = function(g, c, room, maxPlayers, gameMode, mapSize, mapVisibili
 		};
 
 		if(g.rooms[room].gameMode==='ctf') {
-			g.rooms[room].redScore = 0;
-			g.rooms[room].blueScore = 0;
+			g.rooms[room].redScore  = 0; g.rooms[room].redPlayers  = 0;
+			g.rooms[room].blueScore = 0; g.rooms[room].bluePlayers = 0;
+		} else if(g.rooms[room].gameMode==='hvb') {
+			g.rooms[room].bots = [];
 		}
 
 		generateMap(g, room);
